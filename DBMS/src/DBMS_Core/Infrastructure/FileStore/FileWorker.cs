@@ -180,8 +180,8 @@ namespace DBMS_Core.Infrastructure.FileStore
 
             foreach (var source in table.Sources)
             {
-                var data = source.GetData();
-                data.Where(element =>
+                IEnumerable<List<object>> data = source.GetData();
+                data = data.Where(element =>
                 {
                     foreach (var condition in conditions)
                     {
@@ -211,8 +211,8 @@ namespace DBMS_Core.Infrastructure.FileStore
 
             foreach (var source in table.Sources)
             {
-                var data = source.GetData();
-                data.Where(element =>
+                IEnumerable<List<object>> data = source.GetData();
+                data = data.Where(element =>
                 {
                     foreach (var condition in conditions)
                     {

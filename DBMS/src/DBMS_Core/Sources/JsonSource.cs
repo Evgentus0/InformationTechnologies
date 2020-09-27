@@ -61,9 +61,7 @@ namespace DBMS_Core.Sources
                     List<List<object>> currentData = await JsonSerializer.DeserializeAsync<List<List<object>>>(streamData);
 
                     currentData.AddRange(data);
-                    var newStringData = JsonSerializer.Serialize(currentData);
-
-                    File.WriteAllText(Url, newStringData);
+                    await JsonSerializer.SerializeAsync(streamData,currentData);
                 }
             }
         }

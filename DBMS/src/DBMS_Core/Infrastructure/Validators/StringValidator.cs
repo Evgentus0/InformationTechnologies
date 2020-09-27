@@ -2,14 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace DBMS_Core.Infrastructure.Validators
 {
     public class StringValidator: IValidator
     {
-        public object Value { get; }
-        public int Operation { get; }
+        public object Value { get; set; }
+        public int Operation { get; set; }
         public string Type => typeof(StringValidator).AssemblyQualifiedName;
+        public string ValueType => typeof(string).AssemblyQualifiedName;
 
         private string _checkValue;
         private StringValidatorOperation _operation;
@@ -59,11 +61,39 @@ namespace DBMS_Core.Infrastructure.Validators
             return true;
         }
 
+        public void InitializeWithProperty()
+        {
+            _operation = (StringValidatorOperation)Operation;
+            _checkValue = (string)Value;
+
+            if (!CheckIntegerValueForLenthOperation(_operation, _checkValue, out int intValue))
+            {
+                throw new ArgumentException($"Incorrect value for string length! Value: {_checkValue}");
+            }
+
+            _operationFunc = new Dictionary<StringValidatorOperation, Func<string, bool>>
+            {
+                [StringValidatorOperation.LengthGreater] = new Func<string, bool>(x => x.Length > intValue),
+                [StringValidatorOperation.LengthGreaterOrEqual] = new Func<string, bool>(x => x.Length >= intValue),
+                [StringValidatorOperation.LengthLess] = new Func<string, bool>(x => x.Length < intValue),
+                [StringValidatorOperation.LengthLessOrEqual] = new Func<string, bool>(x => x.Length <= intValue),
+                [StringValidatorOperation.StartWith] = new Func<string, bool>(x => x.StartsWith(_checkValue)),
+                [StringValidatorOperation.Contains] = new Func<string, bool>(x => x.Contains(_checkValue)),
+                [StringValidatorOperation.EndWith] = new Func<string, bool>(x => x.EndsWith(_checkValue)),
+                [StringValidatorOperation.NotEmpty] = new Func<string, bool>(x => !string.IsNullOrWhiteSpace(x))
+            };
+        }
+
         public StringValidator(StringValidatorOperation operation, int value) : this(operation, value.ToString()) { }
 
-        public bool IsValid(object actualValue)
+        public bool IsValid(object value)
         {
-            return _operationFunc[_operation]((string)actualValue);
+            if (value.GetType() == typeof(JsonElement))
+            {
+                value = ((JsonElement)value).GetString();
+            }
+
+            return _operationFunc[_operation]((string)value);
         }
 
     }
