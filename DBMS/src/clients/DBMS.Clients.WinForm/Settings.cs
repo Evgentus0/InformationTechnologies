@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace DBMS.Clients.WinForm
+{
+    class Settings
+    {
+        public int LeftSideButtonWidth { get; set; } = 200;
+        public int DataBaseButtonHeight { get; set; } = 50;
+        public int SubButtonHeght { get; set; } = 30;
+    }
+}

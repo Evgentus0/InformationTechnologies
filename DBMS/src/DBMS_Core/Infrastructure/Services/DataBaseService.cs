@@ -16,7 +16,9 @@ namespace DBMS_Core.Infrastructure.Services
     public class DataBaseService: IDataBaseService
     {
         private IFileWorker _fileWorker;
-        public DataBase DataBase { get; private set; }
+        private DataBase DataBase {  get;  set; }
+
+        public string Name => DataBase.Name;
         public ITableService this[string tableName]
         {
             get
@@ -77,6 +79,14 @@ namespace DBMS_Core.Infrastructure.Services
             _fileWorker.DeleteTableSources(table);
             DataBase.Tables.Remove(table);
             _fileWorker.UpdateDataBaseFile();
+        }
+
+        public IEnumerable<ITableService> GetTables()
+        {
+            foreach(var table in DataBase.Tables)
+            {
+                yield return TableServiceFactory.GetTableService(table, _fileWorker);
+            }
         }
     }
 }
