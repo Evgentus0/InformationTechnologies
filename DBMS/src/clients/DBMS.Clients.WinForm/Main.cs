@@ -12,8 +12,6 @@ namespace DBMS.Clients.WinForm
 {
     public partial class Main : Form
     {
-        private Dictionary<string, List<(string name, Action<object, EventArgs> action)>> _menuItemsList;
-
         private DbFormManager _formManager;
 
         public Main()
@@ -28,9 +26,7 @@ namespace DBMS.Clients.WinForm
 
         private void InitMenu()
         {
-            _menuItemsList = GetMenuList();
-
-            foreach (var item in _menuItemsList)
+            foreach (var item in MenuList)
             {
                 var outItem = new ToolStripMenuItem(item.Key);
                 foreach (var inItem in item.Value)
@@ -45,9 +41,8 @@ namespace DBMS.Clients.WinForm
             }
         }
 
-        private Dictionary<string, List<(string name, Action<object, EventArgs> action)>> GetMenuList()
-        {
-            return new Dictionary<string, List<(string name, Action<object, EventArgs> action)>>()
+        private Dictionary<string, List<(string name, Action<object, EventArgs> action)>> MenuList =>
+            new Dictionary<string, List<(string name, Action<object, EventArgs> action)>>()
             {
                 [Constants.MainForm.File] = new List<(string name, Action<object, EventArgs> action)>
                 {
@@ -77,10 +72,10 @@ namespace DBMS.Clients.WinForm
                 {
                     (Constants.MainForm.Instruction, new Action<object, EventArgs>((o, f) =>
                     {
-                        MessageBox.Show("test1");
+                        MessageBox.Show("Eugene DBMS");
                     }))
                 },
             };
-        }
+        
     }
 }

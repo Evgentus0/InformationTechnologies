@@ -23,8 +23,6 @@ namespace DBMS.Clients.WinForm.Forms
             IsSet = false;
 
             comboBoxSourceType.DataSource = Enum.GetValues(typeof(SupportedSources));
-
-
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
@@ -51,7 +49,7 @@ namespace DBMS.Clients.WinForm.Forms
             }
             else
             {
-                MessageBox.Show(Constants.EnterDbNameForm.EnterData);
+                MessageBox.Show(Constants.EnterNewDb.EnterData);
             }
         }
 

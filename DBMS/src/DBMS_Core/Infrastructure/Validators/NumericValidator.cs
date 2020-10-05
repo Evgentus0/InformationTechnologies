@@ -12,6 +12,7 @@ namespace DBMS_Core.Infrastructure.Validators
         public int Operation { get; set; }
         public string Type => typeof(NumericValidator<T>).AssemblyQualifiedName;
         public string ValueType => typeof(T).AssemblyQualifiedName;
+        public string OperationType => typeof(NumericValidatorOperation).AssemblyQualifiedName;
 
         private T _checkValue;
         private NumericValidatorOperation _operation;

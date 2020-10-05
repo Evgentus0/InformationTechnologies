@@ -33,7 +33,8 @@ namespace DBMS.Clients.WinForm
         {
             IDataBaseService dataBaseService = 
                 new DataBaseService(dbSettings.Name, 
-                dbSettings.RootPath, dbSettings.FileSize, dbSettings.DefaultSource);
+                dbSettings.RootPath, dbSettings.FileSize, 
+                dbSettings.DefaultSource);
 
             var dbPanel = new DataBasePanelControl(dataBaseService);
             SharedControls.FlowLayoutPanelMenu.Controls.Add(dbPanel);

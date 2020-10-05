@@ -1,4 +1,5 @@
-﻿using DBMS_Core.Interfaces;
+﻿using DBMS.Clients.WinForm.Forms;
+using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,6 +13,8 @@ namespace DBMS.Clients.WinForm.Controls
         private bool _isCollapsed;
         private Settings _settings;
 
+        private List<(string name, Action<object, EventArgs> action)> _menuItemsList;
+
         private IDataBaseService _dataBaseService;
         public DataBasePanelControl(IDataBaseService dataBaseService)
         {
@@ -20,11 +23,15 @@ namespace DBMS.Clients.WinForm.Controls
 
             _isCollapsed = true;
 
-            InitPanel(_dataBaseService.Name);
+            _menuItemsList = GetMenuItemList();
 
-            AddMainButton(_dataBaseService.Name);
+            InitPanel();
+
+            AddMainButton();
 
             InitSubButtons();
+
+            InitContextMenu();
         }
 
         private void InitSubButtons()
@@ -35,19 +42,50 @@ namespace DBMS.Clients.WinForm.Controls
             }
         }
 
-        private void InitPanel(string name)
+        private List<(string name, Action<object, EventArgs> action)> GetMenuItemList()
+        {
+            return new List<(string name, Action<object, EventArgs> action)>()
+            {
+                (Constants.DbPanelControl.AddNewTable, new Action<object, EventArgs>((o, f) =>
+                    {
+                        AddNewTable();
+                    })),
+
+                (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
+                    {
+                        MessageBox.Show("test2");
+                    }))
+            };
+        }
+
+        private void AddNewTable()
+        {
+            var form = new InputForm(Constants.DbPanelControl.NewTableName);
+
+            form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                _dataBaseService.AddTable(form.Value);
+                var tableService = _dataBaseService[form.Value];
+
+                AddSubButton(tableService);
+            }
+        }
+
+        private void InitPanel()
         {
             Size = new Size(_settings.LeftSideButtonWidth, _settings.DataBaseButtonHeight);
             MinimumSize = new Size(_settings.LeftSideButtonWidth, _settings.DataBaseButtonHeight);
             Dock = DockStyle.Top;
-            Name = name + "Panel";
+            Name = _dataBaseService.Name + "Panel";
         }
 
-        private void AddMainButton(string name)
+        private void AddMainButton()
         {
             var button = new Button();
             button.Size = new Size(_settings.LeftSideButtonWidth, _settings.DataBaseButtonHeight);
-            button.Text = name;
+            button.Text = _dataBaseService.Name;
             button.Dock = DockStyle.Top;
             button.Click += MainButton_Click;
 
@@ -72,6 +110,13 @@ namespace DBMS.Clients.WinForm.Controls
         }
 
         private int MaxHeight => _settings.DataBaseButtonHeight + (Controls.Count - 1) * _settings.SubButtonHeght;
+
+        private void InitContextMenu()
+        {
+            var contextMenu = CommonControlsHelper.GetContextMenuStrip(_menuItemsList);
+
+            ContextMenuStrip = contextMenu;
+        }
 
         public void AddSubButton(ITableService tableService)
         {

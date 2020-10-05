@@ -15,6 +15,7 @@ namespace DBMS_Core.Interfaces
         string Type { get; }
         [JsonPropertyName("valueType")]
         string ValueType { get; }
+        string OperationType { get; }
         void InitializeWithProperty();
 
         bool IsValid(object value); 

@@ -29,6 +29,12 @@ namespace DBMS_Core.Infrastructure.Services
 
             _fileWorker = fileWorker;
         }
+
+        public void UpdateSchema()
+        {
+            _fileWorker.UpdateDataBaseFile();
+        }
+
         public void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null)
         {
             if (Table.Schema.Fields.Select(x => x.Name.ToLower()).Any(x => x == name.ToLower()))

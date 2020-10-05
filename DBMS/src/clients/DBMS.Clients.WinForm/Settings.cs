@@ -8,6 +8,8 @@ namespace DBMS.Clients.WinForm
     {
         public int LeftSideButtonWidth { get; set; } = 200;
         public int DataBaseButtonHeight { get; set; } = 50;
+        public int TableSchemaButtonHeight { get; set; } = 30;
+        public int TableSchemaButtonWidth { get; set; } = 30;
         public int SubButtonHeght { get; set; } = 30;
     }
 }

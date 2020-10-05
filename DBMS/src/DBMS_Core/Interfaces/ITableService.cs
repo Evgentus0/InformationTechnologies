@@ -10,6 +10,8 @@ namespace DBMS_Core.Interfaces
     {
         string Name { get; }
         List<Field> Fields { get; }
+        void UpdateSchema();
+
         void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null);
         void AddNewField(Field field);
         void DeleteField(string name);

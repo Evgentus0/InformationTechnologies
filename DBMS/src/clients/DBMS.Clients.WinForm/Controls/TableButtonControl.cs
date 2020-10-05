@@ -1,18 +1,16 @@
-﻿using DBMS_Core.Interfaces;
+﻿using DBMS.Clients.WinForm.Forms;
+using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using DBMS_Core.Extentions;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace DBMS.Clients.WinForm.Controls
 {
-    class TableButtonControl : Button
+    internal class TableButtonControl : Button
     {
         private Settings _settings;
-        private List<(string name, Action<object, EventArgs> action)> _menuItemsList;
 
         private ITableService _tableService;
 
@@ -22,49 +20,67 @@ namespace DBMS.Clients.WinForm.Controls
 
             _tableService = tableService;
 
-            _menuItemsList = GetMenuItemList();
-                
             Text = tableService.Name;
 
             InitButton();
         }
 
-        private List<(string name, Action<object, EventArgs> action)> GetMenuItemList()
-        {
-            return new List<(string name, Action<object, EventArgs> action)>()
-            {
-                (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
-                    {
-                        FillDataGrid();
-                    })),
+        private List<(string name, Action<object, EventArgs> action)> MenuItemList =>
+             new List<(string name, Action<object, EventArgs> action)>()
+                {
+                    (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
+                        {
+                            FillDataGrid();
+                        })),
 
-                (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
-                    {
-                        MessageBox.Show("test2");
-                    }))
-            };
+                    (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
+                        {
+                            EditTableShema();
+                        }))
+                };
+
+        private void EditTableShema()
+        {
+            new TableSchemaForm(_tableService).ShowDialog();
+
+            _tableService.UpdateSchema();
         }
 
         private void FillDataGrid()
         {
+            FillColumnHeaders();
+
+            var dataGrid = SharedControls.DataGrigTable;
+            var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
+            var rows = _tableService.Select(100, 0).Count();
+            if (rows < 1)
+            {
+                MessageBox.Show(Constants.TableButtonControl.EmptyTable);
+            }
+            else
+            {
+                dataGrid.RowCount = rows;
+                int rowCount = 0;
+
+                foreach (var row in _tableService.Select(100, 0))
+                {
+                    for (int i = 0; i < fieldCount; i++)
+                    {
+                        dataGrid.Rows[rowCount].Cells[i].Value = row[i];
+                    }
+                    rowCount++;
+                }
+            }
+        }
+
+        private void FillColumnHeaders()
+        {
             var dataGrid = SharedControls.DataGrigTable;
             var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
 
-            for(int i=0;i< fieldCount; i++)
+            for (int i = 0; i < fieldCount; i++)
             {
                 dataGrid.Columns[i].Name = _tableService.Fields[i].Name;
-            }
-
-            dataGrid.RowCount = 100;
-            int rowCount = 0;
-
-            foreach(var row in _tableService.Select(100, 0))
-            {
-                for (int i = 0; i < fieldCount; i++)
-                {
-                    dataGrid.Rows[rowCount].Cells[i].Value = row[i];
-                }
-                rowCount++;
             }
         }
 
@@ -78,15 +94,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void InitContextMenu()
         {
-            var contextMenu = new ContextMenuStrip();
-
-            foreach (var menuItem in _menuItemsList)
-            {
-                var toolStripMenuItem = new ToolStripMenuItem(menuItem.name);
-                toolStripMenuItem.Click += menuItem.action.Invoke;
-
-                contextMenu.Items.Add(toolStripMenuItem);
-            }
+            var contextMenu = CommonControlsHelper.GetContextMenuStrip(MenuItemList);
 
             ContextMenuStrip = contextMenu;
         }
