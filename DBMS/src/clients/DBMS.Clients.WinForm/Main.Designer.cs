@@ -32,6 +32,7 @@
             this.dataGridViewMain = new System.Windows.Forms.DataGridView();
             this.menuStripTop = new System.Windows.Forms.MenuStrip();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.flowLayoutPanelTopMenu = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMain)).BeginInit();
             this.SuspendLayout();
             // 
@@ -52,9 +53,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewMain.BackgroundColor = System.Drawing.SystemColors.ControlLight;
             this.dataGridViewMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewMain.Location = new System.Drawing.Point(235, 24);
+            this.dataGridViewMain.Location = new System.Drawing.Point(235, 113);
             this.dataGridViewMain.Name = "dataGridViewMain";
-            this.dataGridViewMain.Size = new System.Drawing.Size(786, 704);
+            this.dataGridViewMain.Size = new System.Drawing.Size(786, 615);
             this.dataGridViewMain.TabIndex = 1;
             this.dataGridViewMain.Text = "dataGridView1";
             // 
@@ -71,11 +72,19 @@
             this.openFileDialog.FileName = "DbFile";
             this.openFileDialog.Filter = "DataBase file|*.edbf";
             // 
+            // flowLayoutPanelTopMenu
+            // 
+            this.flowLayoutPanelTopMenu.Location = new System.Drawing.Point(235, 7);
+            this.flowLayoutPanelTopMenu.Name = "flowLayoutPanelTopMenu";
+            this.flowLayoutPanelTopMenu.Size = new System.Drawing.Size(786, 100);
+            this.flowLayoutPanelTopMenu.TabIndex = 3;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1033, 743);
+            this.Controls.Add(this.flowLayoutPanelTopMenu);
             this.Controls.Add(this.dataGridViewMain);
             this.Controls.Add(this.flowLayoutPanelMenu);
             this.Controls.Add(this.menuStripTop);
@@ -97,5 +106,6 @@
         private System.Windows.Forms.DataGridView dataGridViewMain;
         private System.Windows.Forms.MenuStrip menuStripTop;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTopMenu;
     }
 }

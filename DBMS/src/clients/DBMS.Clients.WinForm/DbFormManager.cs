@@ -21,7 +21,7 @@ namespace DBMS.Clients.WinForm
                 IDataBaseService dataBaseService = new DataBaseService(path);
 
                 var dbPanel = new DataBasePanelControl(dataBaseService);
-                SharedControls.FlowLayoutPanelMenu.Controls.Add(dbPanel);
+                SharedControls.FlowLayoutPanelLeftMenu.Controls.Add(dbPanel);
             }
             catch(Exception ex)
             {
@@ -37,7 +37,7 @@ namespace DBMS.Clients.WinForm
                 dbSettings.DefaultSource);
 
             var dbPanel = new DataBasePanelControl(dataBaseService);
-            SharedControls.FlowLayoutPanelMenu.Controls.Add(dbPanel);
+            SharedControls.FlowLayoutPanelLeftMenu.Controls.Add(dbPanel);
         }
     }
 }

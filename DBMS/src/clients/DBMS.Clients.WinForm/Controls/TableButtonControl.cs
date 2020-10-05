@@ -30,7 +30,8 @@ namespace DBMS.Clients.WinForm.Controls
                 {
                     (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
                         {
-                            FillDataGrid();
+                            AddTopMenuButtons();
+                            FillDataGrid(_tableService.Select(100, 0));
                         })),
 
                     (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
@@ -39,6 +40,64 @@ namespace DBMS.Clients.WinForm.Controls
                         }))
                 };
 
+        private void AddTopMenuButtons()
+        {
+            var size = new Size(_settings.TopMenuButtonWidth, _settings.SubButtonHeght);
+
+            var buttonConditions = new Button
+            {
+                Text = Constants.TableButtonControl.AddConditions,
+                Size = size
+            };
+            buttonConditions.Click += ButtonConditions_Click;
+
+            var buttonInsert = new Button
+            {
+                Text = Constants.TableButtonControl.InsertData,
+                Size = size,
+            };
+            buttonInsert.Click += ButtonInsert_Click;
+
+            var buttonDelete = new Button
+            {
+                Text = Constants.TableButtonControl.DeleteData,
+                Size = size
+            };
+            buttonDelete.Click += ButtonDelete_Click;
+
+            SharedControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[] { buttonConditions, buttonInsert, buttonDelete });
+        }
+
+        private void ButtonConditions_Click(object sender, EventArgs e)
+        {
+            var form = new SelectConditionsForm(_tableService.Fields);
+            form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                if (form.SelectConditions.Validators.Any())
+                {
+                    FillDataGrid(_tableService.Select(form.SelectConditions.Top,
+                        form.SelectConditions.Offset, form.SelectConditions.Validators));
+                }
+                else
+                {
+                    FillDataGrid(_tableService.Select(form.SelectConditions.Top,
+                        form.SelectConditions.Offset));
+                }
+            }
+        }
+
+        private void ButtonDelete_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ButtonInsert_Click(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
         private void EditTableShema()
         {
             new TableSchemaForm(_tableService).ShowDialog();
@@ -46,23 +105,25 @@ namespace DBMS.Clients.WinForm.Controls
             _tableService.UpdateSchema();
         }
 
-        private void FillDataGrid()
+        private void FillDataGrid(IEnumerable<List<object>> rows)
         {
+            var dataGrid = SharedControls.DataGrigTable;
+            dataGrid.Rows.Clear();
+
             FillColumnHeaders();
 
-            var dataGrid = SharedControls.DataGrigTable;
             var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
-            var rows = _tableService.Select(100, 0).Count();
-            if (rows < 1)
+            var rowsCount = rows.Count();
+            if (rowsCount < 1)
             {
                 MessageBox.Show(Constants.TableButtonControl.EmptyTable);
             }
             else
             {
-                dataGrid.RowCount = rows;
+                dataGrid.RowCount = rowsCount;
                 int rowCount = 0;
 
-                foreach (var row in _tableService.Select(100, 0))
+                foreach (var row in rows)
                 {
                     for (int i = 0; i < fieldCount; i++)
                     {

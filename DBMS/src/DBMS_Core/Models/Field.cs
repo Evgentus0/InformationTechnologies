@@ -23,5 +23,10 @@ namespace DBMS_Core.Models
         {
             Validators = new List<IValidator>();
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

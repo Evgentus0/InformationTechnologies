@@ -28,6 +28,9 @@ namespace DBMS.Clients.WinForm
             public const string Select = "Select top 100";
             public const string EditSchema = "Edit table schema";
             public const string EmptyTable = "Table is empty";
+            public const string InsertData = "Insert rows";
+            public const string DeleteData = "Delete rows";
+            public const string AddConditions = "Select conditions";
         }   
 
         public static class EnterNewDb
@@ -52,6 +55,12 @@ namespace DBMS.Clients.WinForm
             public const string Operation = "Operation";
             public const string Value = "Value";
             public const string DeleteValidator = "Delete validator";
+        }
+
+        public static class SelectConditions
+        {
+            public const string DeleteCondition = "Delete condition";
+            public const string FieldName = "Field name";
         }
     }
 }

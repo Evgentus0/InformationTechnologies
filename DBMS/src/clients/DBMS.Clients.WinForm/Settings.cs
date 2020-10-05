@@ -11,5 +11,6 @@ namespace DBMS.Clients.WinForm
         public int TableSchemaButtonHeight { get; set; } = 30;
         public int TableSchemaButtonWidth { get; set; } = 30;
         public int SubButtonHeght { get; set; } = 30;
+        public int TopMenuButtonWidth = 100;
     }
 }

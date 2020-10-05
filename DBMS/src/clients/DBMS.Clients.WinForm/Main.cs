@@ -18,8 +18,9 @@ namespace DBMS.Clients.WinForm
         {
             InitializeComponent();
             InitMenu();
-            SharedControls.FlowLayoutPanelMenu = flowLayoutPanelMenu;
+            SharedControls.FlowLayoutPanelLeftMenu = flowLayoutPanelMenu;
             SharedControls.DataGrigTable = dataGridViewMain;
+            SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
 
             _formManager = new DbFormManager();
         }

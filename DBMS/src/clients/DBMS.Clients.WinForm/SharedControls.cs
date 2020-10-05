@@ -7,7 +7,8 @@ namespace DBMS.Clients.WinForm
 {
     class SharedControls
     {
-        public static FlowLayoutPanel FlowLayoutPanelMenu;
+        public static FlowLayoutPanel FlowLayoutPanelLeftMenu;
+        public static FlowLayoutPanel FlowLayoutPanelTopMenu;
         public static DataGridView DataGrigTable;
     }
 }

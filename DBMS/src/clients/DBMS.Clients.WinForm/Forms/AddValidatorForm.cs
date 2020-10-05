@@ -36,7 +36,9 @@ namespace DBMS.Clients.WinForm.Forms
                 if (string.IsNullOrEmpty(textBoxValue.Text))
                     throw new Exception();
 
-                _value = Convert.ChangeType(textBoxValue.Text, Type.GetType(_type.GetAssemblyDescription()));
+                var validator = (IValidator)Activator.CreateInstance(Type.GetType(_type.GetValidatorType()));
+
+                _value = Convert.ChangeType(textBoxValue.Text, Type.GetType(validator.ValueType));
 
                 return true;
             }

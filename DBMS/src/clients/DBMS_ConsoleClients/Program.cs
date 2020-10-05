@@ -24,13 +24,13 @@ namespace DBMS_ConsoleClients
             //table.AddNewField("Age", DBMS_Core.Models.Types.SupportedTypes.Integer,
             //    new List<IValidator> { new NumericValidator<int>(NumericValidatorOperation.Greater, 0) });
             //table.AddNewField("Income", DBMS_Core.Models.Types.SupportedTypes.RealInterval);
-            //var data = new List<List<object>>()
-            // {
-            //     new List<object>{"name1", 12, new RealInterval { From=12, To=54353} },
-            //     new List<object>{"name3", -12, new RealInterval { From=12, To=564353} },
-            //     new List<object>{"name2", 124, new RealInterval { From=124, To=543} },
-            // };
-            //table.InsertDataRange(data);
+            var data = new List<List<object>>()
+             {
+                 new List<object>{"name1", 12, new RealInterval { From=12, To=54353} },
+                 new List<object>{"name3", -12, new RealInterval { From=12, To=564353} },
+                 new List<object>{"name2", 124, new RealInterval { From=124, To=543} },
+             };
+            table.InsertDataRange(data);
 
 
             var selectData = table.Select(3, 1,
