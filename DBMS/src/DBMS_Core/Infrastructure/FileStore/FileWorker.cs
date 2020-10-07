@@ -134,9 +134,9 @@ namespace DBMS_Core.Infrastructure.FileStore
 
         }
 
-        public IEnumerable<List<object>> Select(Table table)
+        public List<List<object>> Select(Table table)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (table.Sources.IsNullOrEmpty())
             {
@@ -145,15 +145,15 @@ namespace DBMS_Core.Infrastructure.FileStore
 
             foreach (var source in table.Sources)
             {
-                result = result.Union(source.GetData());
+                result = result.Union(source.GetData()).ToList();
             }
 
             return result;
         }
 
-        public IEnumerable<List<object>> Select(Table table, int top, int offset)
+        public List<List<object>> Select(Table table, int top, int offset)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (table.Sources.IsNullOrEmpty())
             {
@@ -165,20 +165,20 @@ namespace DBMS_Core.Infrastructure.FileStore
                 var data = source.GetData();
 
                 if(!data.IsNullOrEmpty())
-                    result = result.Union(data);
+                    result = result.Union(data).ToList();
 
                 if (result.Count() + offset >= top)
                 {
-                    return result.Skip(offset).Take(top);
+                    return result.Skip(offset).Take(top).ToList();
                 }
             }
 
-            return result.Skip(offset);
+            return result.Skip(offset).ToList();
         }
 
-        public IEnumerable<List<object>> Select(Table table, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Table table, Dictionary<string, List<IValidator>> conditions)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (table.Sources.IsNullOrEmpty())
             {
@@ -202,14 +202,14 @@ namespace DBMS_Core.Infrastructure.FileStore
                     }
                     return true;
                 });
-                result = result.Union(data);
+                result = result.Union(data).ToList();
             }
             return result;
         }
 
-        public IEnumerable<List<object>> Select(Table table, int top, int offset, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Table table, int top, int offset, Dictionary<string, List<IValidator>> conditions)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (table.Sources.IsNullOrEmpty())
             {
@@ -233,13 +233,13 @@ namespace DBMS_Core.Infrastructure.FileStore
                     }
                     return true;
                 });
-                result = result.Union(data);
+                result = result.Union(data).ToList();
                 if (result.Count() + offset >= top)
                 {
-                    return result.Skip(offset).Take(top);
+                    return result.Skip(offset).Take(top).ToList();
                 }
             }
-            return result.Skip(offset);
+            return result.Skip(offset).ToList();
         }
 
         public void UpdateDataBaseFile()
