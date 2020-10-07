@@ -21,10 +21,10 @@ namespace DBMS_Core.Interfaces
         void DeleteRows(Dictionary<string, List<IValidator>> conditions);
         //void UpdateRow(Dictionary<string, object> keyValues, List<List<object>> rows);
 
-        IEnumerable<List<object>> Select();
-        IEnumerable<List<object>> Select(int top, int offset);
-        IEnumerable<List<object>> Select(Dictionary<string, List<IValidator>> conditions);
-        IEnumerable<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select();
+        List<List<object>> Select(int top, int offset);
+        List<List<object>> Select(Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions);
 
         List<List<object>> Union(params Table[] tables);
     }
