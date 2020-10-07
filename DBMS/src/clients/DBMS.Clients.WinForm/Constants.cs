@@ -31,6 +31,7 @@ namespace DBMS.Clients.WinForm
             public const string InsertData = "Insert rows";
             public const string DeleteData = "Delete rows";
             public const string AddConditions = "Select conditions";
+            public const string InsertIncorrectData = "In row number {0} in column {1} value \"{2}\" has incorrect type!";
         }   
 
         public static class EnterNewDb

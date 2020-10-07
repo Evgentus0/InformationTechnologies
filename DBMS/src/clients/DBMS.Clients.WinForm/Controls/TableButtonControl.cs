@@ -70,7 +70,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonConditions_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Fields);
+            var form = new SelectConditionsForm(_tableService.Fields, false);
             form.ShowDialog();
 
             if (form.IsSet)
@@ -90,12 +90,25 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var form = new SelectConditionsForm(_tableService.Fields, true);
+            form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                if (form.SelectConditions.Validators.Any())
+                {
+                    _tableService.DeleteRows(form.SelectConditions.Validators);
+
+                    FillDataGrid(_tableService.Select(100, 0));
+                }
+            }
         }
 
         private void ButtonInsert_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var form = new InsertForm(_tableService.Fields);
+
+            form.ShowDialog();
         }
 
         private void EditTableShema()

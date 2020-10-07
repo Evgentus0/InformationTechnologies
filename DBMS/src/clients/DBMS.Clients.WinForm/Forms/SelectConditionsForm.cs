@@ -22,9 +22,11 @@ namespace DBMS.Clients.WinForm.Forms
         private const string _deleteButton = "deleteButton", _validatorsButton = "validatorButton";
 
         private Dictionary<string, Field> _tempFields;
-        public SelectConditionsForm(List<Field> fields)
+        public SelectConditionsForm(List<Field> fields, bool hideTopOffsetGroup)
         {
             InitializeComponent();
+
+            groupBox1.Visible = !hideTopOffsetGroup;
 
             _fields = fields;
             IsSet = false;
@@ -115,6 +117,15 @@ namespace DBMS.Clients.WinForm.Forms
                 {
                     SelectConditions.Validators.Add(field.Name, form.Validators);
                 }
+
+                if (form.Validators.Count > 0)
+                {
+                    combobox.Enabled = false;
+                }
+                else
+                {
+                    combobox.Enabled = true;
+                }
             }
         }
 
@@ -135,7 +146,20 @@ namespace DBMS.Clients.WinForm.Forms
 
         private void DeleteButton_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var button = (Button)sender;
+            var name = button.Name;
+
+            var combobox = (ComboBox)tableLayoutPanelConditions.Controls.Find(name.Split('.').First() + "." + nameof(ComboBox), false).First();
+            var field = (Field)combobox.SelectedItem;
+
+            tableLayoutPanelConditions.Controls.Remove(combobox);
+            tableLayoutPanelConditions.Controls.RemoveByKey(name + "." + _validatorsButton);
+            tableLayoutPanelConditions.Controls.Remove(button);
+
+            if (SelectConditions.Validators.ContainsKey(field.Name))
+            {
+                SelectConditions.Validators.Remove(field.Name);
+            }
         }
     }
 }

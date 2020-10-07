@@ -126,7 +126,10 @@ namespace DBMS_Core.Infrastructure.FileStore
                 }).ToList();
 
                 var source = table.Sources.Last();
-                source.WriteData(rows);
+
+                var data = source.GetData();
+                data.AddRange(rows);
+                source.WriteData(data);
             }
 
         }
