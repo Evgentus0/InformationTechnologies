@@ -87,22 +87,22 @@ namespace DBMS_Core.Infrastructure.Services
             _fileWorker.InsertData(Table, rows);
         }
 
-        public IEnumerable<List<object>> Select()
+        public List<List<object>> Select()
         {
             return _fileWorker.Select(Table);
         }
 
-        public IEnumerable<List<object>> Select(int top, int offset)
+        public List<List<object>> Select(int top, int offset)
         {
             return _fileWorker.Select(Table, top, offset);
         }
 
-        public IEnumerable<List<object>> Select(Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Dictionary<string, List<IValidator>> conditions)
         {
             return _fileWorker.Select(Table, conditions);
         }
 
-        public IEnumerable<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions)
         {
             return _fileWorker.Select(Table, top, offset, conditions);
         }

@@ -16,9 +16,9 @@ namespace DBMS_Core.Interfaces
         void DeleteField(Table table, int index);
         void DeleteRows(Table table, Dictionary<string, List<IValidator>> conditions);
         void InsertData(Table table, List<List<object>> row);
-        IEnumerable<List<object>> Select(Table table);
-        IEnumerable<List<object>> Select(Table table, int top, int offset);
-        IEnumerable<List<object>> Select(Table table, Dictionary<string, List<IValidator>> conditions);
-        IEnumerable<List<object>> Select(Table table, int top, int offset, Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select(Table table);
+        List<List<object>> Select(Table table, int top, int offset);
+        List<List<object>> Select(Table table, Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select(Table table, int top, int offset, Dictionary<string, List<IValidator>> conditions);
     }
 }
