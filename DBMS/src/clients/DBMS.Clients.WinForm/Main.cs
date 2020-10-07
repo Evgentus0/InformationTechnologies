@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -27,7 +28,7 @@ namespace DBMS.Clients.WinForm
 
         private void InitMenu()
         {
-            foreach (var item in MenuList)
+            foreach (var item in TopMenuList)
             {
                 var outItem = new ToolStripMenuItem(item.Key);
                 foreach (var inItem in item.Value)
@@ -42,7 +43,7 @@ namespace DBMS.Clients.WinForm
             }
         }
 
-        private Dictionary<string, List<(string name, Action<object, EventArgs> action)>> MenuList =>
+        private Dictionary<string, List<(string name, Action<object, EventArgs> action)>> TopMenuList =>
             new Dictionary<string, List<(string name, Action<object, EventArgs> action)>>()
             {
                 [Constants.MainForm.File] = new List<(string name, Action<object, EventArgs> action)>
@@ -77,6 +78,5 @@ namespace DBMS.Clients.WinForm
                     }))
                 },
             };
-        
     }
 }

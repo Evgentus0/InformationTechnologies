@@ -1,4 +1,5 @@
-﻿using DBMS_Core.Infrastructure.Validators;
+﻿using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Validators;
 using DBMS_Core.Models;
 using System;
 using System.Collections.Generic;
@@ -52,19 +53,24 @@ namespace DBMS.Clients.WinForm.Forms
 
                 for(var j = 0; j < dataGridViewData.Columns.Count; j++)
                 {
-                    object value = dataGridViewData.Rows[i].Cells[j].Value;
-                    if(TypeValidator.IsValidValue(_fields[j].Type, value))
+                    string value = dataGridViewData.Rows[i].Cells[j].Value.ToString();
+                    try
                     {
-                        row.Add(value);
+                        row.Add(SupportedTypesFactory.GetTypeInstance(_fields[j].Type, value));
                     }
-                    else
+                    catch
                     {
+                        Values.Clear();
+                        IsSet = false;
                         MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j + 1, value));
                         return;
                     }
                 }
                 Values.Add(row); 
             }
+            IsSet = true;
+
+            Close();
         }
     }
 }

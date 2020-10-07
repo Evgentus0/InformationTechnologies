@@ -15,6 +15,8 @@ namespace DBMS.Clients.WinForm
             public const string Instruction = "Instruction";
             public const string Open = "Open DB file";
             public const string CreateNew = "Create new DataBase";
+            public const string DeleteSelectedRows = "Delete selected rows";
+            public const string UspdateRow = "Update selected rows";
         }
 
         public static class DbPanelControl
@@ -56,6 +58,7 @@ namespace DBMS.Clients.WinForm
             public const string Operation = "Operation";
             public const string Value = "Value";
             public const string DeleteValidator = "Delete validator";
+            public const string ValidatorIsNotAvailable = "Validator for this type is not available";
         }
 
         public static class SelectConditions

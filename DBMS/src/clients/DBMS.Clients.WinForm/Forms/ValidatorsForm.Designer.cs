@@ -43,7 +43,7 @@
             this.tableLayoutPanelMain.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
             this.tableLayoutPanelMain.RowCount = 1;
-            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 409F));
             this.tableLayoutPanelMain.Size = new System.Drawing.Size(930, 409);
             this.tableLayoutPanelMain.TabIndex = 0;
             // 
@@ -58,6 +58,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ValidatorsForm";
             this.Text = "ValidatorsForm";
+            this.Load += new System.EventHandler(this.ValidatorsForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

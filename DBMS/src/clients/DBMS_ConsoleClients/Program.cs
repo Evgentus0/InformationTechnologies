@@ -16,8 +16,8 @@ namespace DBMS_ConsoleClients
             // long fileSize = 1000000;
             // //IDataBaseService dataBaseService = new DataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.Json);
             IDataBaseService dataBaseService = new DataBaseService(path + "\\FirstDB.edbf");
+            dataBaseService.DeleteTable("SecondTable");
             //dataBaseService.AddTable("FirstTable");
-
             var table = dataBaseService["FirstTable"];
 
             //table.AddNewField("Name", SupportedTypes.String);

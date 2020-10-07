@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.flowLayoutPanelMenu = new System.Windows.Forms.FlowLayoutPanel();
-            this.dataGridViewMain = new System.Windows.Forms.DataGridView();
             this.menuStripTop = new System.Windows.Forms.MenuStrip();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.flowLayoutPanelTopMenu = new System.Windows.Forms.FlowLayoutPanel();
+            this.dataGridViewMain = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMain)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,19 +45,6 @@
             this.flowLayoutPanelMenu.Name = "flowLayoutPanelMenu";
             this.flowLayoutPanelMenu.Size = new System.Drawing.Size(230, 719);
             this.flowLayoutPanelMenu.TabIndex = 0;
-            // 
-            // dataGridViewMain
-            // 
-            this.dataGridViewMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewMain.BackgroundColor = System.Drawing.SystemColors.ControlLight;
-            this.dataGridViewMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewMain.Location = new System.Drawing.Point(235, 113);
-            this.dataGridViewMain.Name = "dataGridViewMain";
-            this.dataGridViewMain.Size = new System.Drawing.Size(786, 615);
-            this.dataGridViewMain.TabIndex = 1;
-            this.dataGridViewMain.Text = "dataGridView1";
             // 
             // menuStripTop
             // 
@@ -78,6 +65,20 @@
             this.flowLayoutPanelTopMenu.Name = "flowLayoutPanelTopMenu";
             this.flowLayoutPanelTopMenu.Size = new System.Drawing.Size(786, 100);
             this.flowLayoutPanelTopMenu.TabIndex = 3;
+            // 
+            // dataGridViewMain
+            // 
+            this.dataGridViewMain.AllowUserToAddRows = false;
+            this.dataGridViewMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewMain.BackgroundColor = System.Drawing.SystemColors.ControlLight;
+            this.dataGridViewMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewMain.Location = new System.Drawing.Point(236, 120);
+            this.dataGridViewMain.Name = "dataGridViewMain";
+            this.dataGridViewMain.Size = new System.Drawing.Size(786, 615);
+            this.dataGridViewMain.TabIndex = 1;
+            this.dataGridViewMain.Text = "dataGridView1";
             // 
             // Main
             // 

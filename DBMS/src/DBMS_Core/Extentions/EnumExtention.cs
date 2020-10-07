@@ -1,4 +1,5 @@
 ﻿using DBMS_Core.Attributes;
+using DBMS_Core.Models.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -64,6 +65,16 @@ namespace DBMS_Core.Extentions
         public static string GetName(this Enum value)
         {
             return Enum.GetName(value.GetType(), value);
+        }
+
+        public static object GetDefaultValue(this SupportedTypes value)
+        {
+            var type = Type.GetType(value.GetAssemblyDescription());
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+            return null;
         }
     }
 }

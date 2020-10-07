@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DBMS_Core.Models.Types
 {
-    internal class Picture
+    public class Picture
     {
         public string Description { get; set; }
         public string Path { get; set; }

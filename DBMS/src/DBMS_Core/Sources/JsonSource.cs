@@ -29,7 +29,7 @@ namespace DBMS_Core.Sources
             var data = File.ReadAllText(Url);
             if (string.IsNullOrEmpty(data))
             {
-                return null;
+                return new List<List<object>>();
             }
 
             var result = JsonSerializer.Deserialize<List<List<object>>>(data);

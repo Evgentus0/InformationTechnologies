@@ -1,4 +1,5 @@
 ﻿using DBMS.Clients.WinForm.Forms;
+using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace DBMS.Clients.WinForm.Controls
             Text = tableService.Name;
 
             InitButton();
+
+            InitContextMeniForDataGrid();
         }
 
         private List<(string name, Action<object, EventArgs> action)> MenuItemList =>
@@ -42,6 +45,8 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void AddTopMenuButtons()
         {
+            SharedControls.FlowLayoutPanelTopMenu.Controls.Clear();
+
             var size = new Size(_settings.TopMenuButtonWidth, _settings.SubButtonHeght);
 
             var buttonConditions = new Button
@@ -107,8 +112,14 @@ namespace DBMS.Clients.WinForm.Controls
         private void ButtonInsert_Click(object sender, EventArgs e)
         {
             var form = new InsertForm(_tableService.Fields);
-
             form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                _tableService.InsertDataRange(form.Values);
+
+                FillDataGrid(_tableService.Select(100, 0));
+            }
         }
 
         private void EditTableShema()
@@ -125,7 +136,7 @@ namespace DBMS.Clients.WinForm.Controls
 
             FillColumnHeaders();
 
-            var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
+            var fieldCount = _tableService.Fields.Count() + 1;
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
@@ -144,17 +155,19 @@ namespace DBMS.Clients.WinForm.Controls
                     }
                     rowCount++;
                 }
+                dataGrid.Columns[0].Visible = false;
             }
         }
 
         private void FillColumnHeaders()
         {
             var dataGrid = SharedControls.DataGrigTable;
-            var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
+            var fieldCount = _tableService.Fields.Count();
+            dataGrid.ColumnCount = fieldCount + 1;
 
             for (int i = 0; i < fieldCount; i++)
             {
-                dataGrid.Columns[i].Name = _tableService.Fields[i].Name;
+                dataGrid.Columns[i + 1].Name = _tableService.Fields[i].Name;
             }
         }
 
@@ -171,6 +184,70 @@ namespace DBMS.Clients.WinForm.Controls
             var contextMenu = CommonControlsHelper.GetContextMenuStrip(MenuItemList);
 
             ContextMenuStrip = contextMenu;
+        }
+
+        private void InitContextMeniForDataGrid()
+        {
+            var contextMenu = CommonControlsHelper.GetContextMenuStrip(DataGridMenuList);
+
+            SharedControls.DataGrigTable.ContextMenuStrip = contextMenu;
+        }
+
+        private List<(string name, Action<object, EventArgs> action)> DataGridMenuList =>
+            new List<(string name, Action<object, EventArgs> action)>
+            {
+                (Constants.MainForm.DeleteSelectedRows, new Action<object, EventArgs>((o, f) =>
+                    {
+                        DeleteSelectedRows();
+                    })),
+                (Constants.MainForm.UspdateRow, new Action<object, EventArgs>((o, f) =>
+                    {
+                        UpdateSelectedRows();
+                    })),
+            };
+
+        private void UpdateSelectedRows()
+        {
+            var values = new List<List<object>>();
+
+            var dataGridViewData = SharedControls.DataGrigTable;
+
+            for (int i = 0; i < dataGridViewData.SelectedRows.Count; i++)
+            {
+                var row = new List<object>();
+                row.Add(Guid.Parse(dataGridViewData.SelectedRows[i].Cells[0].Value.ToString()));
+
+                for (var j = 1; j < dataGridViewData.Columns.Count; j++)
+                {
+                    string value = dataGridViewData.SelectedRows[i].Cells[j].Value.ToString();
+                    try
+                    {
+                        row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Fields[j - 1].Type, value));
+                    }
+                    catch
+                    {
+                        MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j, value));
+                        return;
+                    }
+                }
+                values.Add(row);
+            }
+
+            _tableService.UpdateRows(values);
+        }
+
+        private void DeleteSelectedRows()
+        {
+            var dataGrid = SharedControls.DataGrigTable;
+
+            var ids = dataGrid.SelectedRows.Cast<DataGridViewRow>().Select(x => Guid.Parse(x.Cells[0].Value.ToString()));
+
+            foreach (DataGridViewRow row in dataGrid.SelectedRows)
+            {
+                dataGrid.Rows.Remove(row);
+            }
+
+            _tableService.DeleteRows(ids.ToList());
         }
     }
 }

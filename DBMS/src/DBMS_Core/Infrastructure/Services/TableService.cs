@@ -35,6 +35,18 @@ namespace DBMS_Core.Infrastructure.Services
             _fileWorker.UpdateDataBaseFile();
         }
 
+        public void UpdateRows(List<List<object>> rows)
+        {
+            for(int i = 0; i < rows.Count; i++)
+            {
+                if(!ValidateDataTypes(rows[i].Skip(1).ToList()))
+                    throw new ArgumentException("Incorrect data types! Expected: " +
+                    Table.Schema.Fields.Select(x => x.Type.GetName()).Aggregate((x, y) => $"{x}, {y}"));
+            }
+
+            _fileWorker.UpdateRows(Table, rows);
+        }
+
         public void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null)
         {
             if (Table.Schema.Fields.Select(x => x.Name.ToLower()).Any(x => x == name.ToLower()))
@@ -43,7 +55,7 @@ namespace DBMS_Core.Infrastructure.Services
             Table.Schema.Fields.Add(new Field { Name = name, Type = type, Validators = validators });
             _fileWorker.UpdateDataBaseFile();
 
-            _fileWorker.AddNewColoumn(Table);
+            _fileWorker.AddNewColoumn(Table, type);
         }
 
         public void AddNewField(Field field)
@@ -51,13 +63,13 @@ namespace DBMS_Core.Infrastructure.Services
             Table.Schema.Fields.Add(field);
             _fileWorker.UpdateDataBaseFile();
 
-            _fileWorker.AddNewColoumn(Table);
+            _fileWorker.AddNewColoumn(Table, field.Type);
         }
 
         public void DeleteField(string name)
         {
             var field = Table.Schema.Fields.Find(x => x.Name == name);
-            var index = Table.Schema.Fields.IndexOf(field);
+            var index = Table.Schema.Fields.IndexOf(field) + 1;
             Table.Schema.Fields.Remove(field);
             _fileWorker.UpdateDataBaseFile();
 
@@ -67,6 +79,10 @@ namespace DBMS_Core.Infrastructure.Services
         public void DeleteRows(Dictionary<string, List<IValidator>> conditions)
         { 
             _fileWorker.DeleteRows(Table, conditions);
+        }
+        public void DeleteRows(List<Guid> ids)
+        {
+            _fileWorker.DeleteRows(Table, ids);
         }
 
         public void InsertData(List<object> row)
