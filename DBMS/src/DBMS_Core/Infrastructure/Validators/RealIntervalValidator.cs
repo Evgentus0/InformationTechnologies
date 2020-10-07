@@ -13,6 +13,7 @@ namespace DBMS_Core.Infrastructure.Validators
         public int Operation { get; set; }
         public string Type => typeof(RealIntervalValidator).AssemblyQualifiedName;
         public string ValueType => typeof(double).AssemblyQualifiedName;
+        public string OperationType => typeof(RealIntervalValidatorOperation).AssemblyQualifiedName;
 
         private double _checkValue;
         private RealIntervalValidatorOperation _operation;

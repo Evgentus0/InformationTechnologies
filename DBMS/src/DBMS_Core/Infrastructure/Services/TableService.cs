@@ -9,14 +9,19 @@ using System.Text;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Validators;
+using System.Runtime.CompilerServices;
 
 namespace DBMS_Core.Infrastructure.Services
 {
     public class TableService : ITableService
     {
-        public Table Table { get; private set; }
+        private Table Table { get;  set; }
 
         private IFileWorker _fileWorker;
+
+        public string Name => Table.Name;
+
+        public List<Field> Fields => Table.Schema.Fields;
 
         public TableService(Table table, IFileWorker fileWorker)
         {
@@ -24,6 +29,12 @@ namespace DBMS_Core.Infrastructure.Services
 
             _fileWorker = fileWorker;
         }
+
+        public void UpdateSchema()
+        {
+            _fileWorker.UpdateDataBaseFile();
+        }
+
         public void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null)
         {
             if (Table.Schema.Fields.Select(x => x.Name.ToLower()).Any(x => x == name.ToLower()))

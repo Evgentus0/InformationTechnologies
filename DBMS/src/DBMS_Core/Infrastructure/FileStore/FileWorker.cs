@@ -48,18 +48,18 @@ namespace DBMS_Core.Infrastructure.FileStore
 
         public void DeleteField(Table table, int index)
         {
-            if (table.Sources.IsNullOrEmpty())
+            if (!table.Sources.IsNullOrEmpty())
             {
-                throw new Exception("The table is empty!");
+                Parallel.ForEach(table.Sources, (source) =>
+                {
+                    var data = source.GetData();
+                    
+                    if(!data.IsNullOrEmpty())
+                        data.ForEach(x => x.RemoveAt(index));
+
+                    source.WriteData(data);
+                });
             }
-
-            Parallel.ForEach(table.Sources, (source) =>
-            {
-                var data = source.GetData();
-                data.ForEach(x => x.RemoveAt(index));
-
-                source.WriteData(data);
-            });
         }
 
         public void DeleteRows(Table table, Dictionary<string, List<IValidator>> conditions)
@@ -159,7 +159,11 @@ namespace DBMS_Core.Infrastructure.FileStore
 
             foreach (var source in table.Sources)
             {
-                result = result.Union(source.GetData());
+                var data = source.GetData();
+
+                if(!data.IsNullOrEmpty())
+                    result = result.Union(data);
+
                 if (result.Count() + offset >= top)
                 {
                     return result.Skip(offset).Take(top);

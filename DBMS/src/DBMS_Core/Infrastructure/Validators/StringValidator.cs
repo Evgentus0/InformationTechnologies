@@ -12,6 +12,7 @@ namespace DBMS_Core.Infrastructure.Validators
         public int Operation { get; set; }
         public string Type => typeof(StringValidator).AssemblyQualifiedName;
         public string ValueType => typeof(string).AssemblyQualifiedName;
+        public string OperationType => typeof(StringValidatorOperation).AssemblyQualifiedName;
 
         private string _checkValue;
         private StringValidatorOperation _operation;
@@ -24,6 +25,9 @@ namespace DBMS_Core.Infrastructure.Validators
             StringValidatorOperation.LengthLess,
             StringValidatorOperation.LengthLessOrEqual
         };
+
+        public StringValidator()
+        { }
 
         public StringValidator(StringValidatorOperation operation, string value)
         {
