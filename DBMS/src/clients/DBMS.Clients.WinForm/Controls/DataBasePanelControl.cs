@@ -49,11 +49,6 @@ namespace DBMS.Clients.WinForm.Controls
                 (Constants.DbPanelControl.AddNewTable, new Action<object, EventArgs>((o, f) =>
                     {
                         AddNewTable();
-                    })),
-
-                (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
-                    {
-                        MessageBox.Show("test2");
                     }))
             };
         }
@@ -120,7 +115,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         public void AddSubButton(ITableService tableService)
         {
-            var button = new TableButtonControl(tableService);
+            var button = new TableButtonControl(tableService, _dataBaseService);
 
             Controls.Add(button);
             MaximumSize = new Size(_settings.LeftSideButtonWidth, MaxHeight);

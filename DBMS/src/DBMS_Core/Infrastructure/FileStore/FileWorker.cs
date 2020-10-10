@@ -266,7 +266,7 @@ namespace DBMS_Core.Infrastructure.FileStore
         {
             var stringData = JsonSerializer.Serialize(DataBase);
 
-            File.WriteAllText($"{DataBase.Settings.RootPath}\\{DataBase.Name}{Constants.FileExtention}", stringData);
+            File.WriteAllText($"{DataBase.Settings.RootPath}\\{DataBase.Name}{Constants.DataBaseFileExtention}", stringData);
         }
 
         public void UpdateRows(Table table, List<List<object>> rows)
@@ -306,7 +306,7 @@ namespace DBMS_Core.Infrastructure.FileStore
         private void AddNewSource(Table table)
         {
             var source = SourceFactory.GetSourceObject(DataBase.Settings.DefaultSource,
-                    DataBase.Settings.RootPath, $"{table.Name}{table.Sources.Count + 1}{Constants.FileExtention}");
+                    DataBase.Settings.RootPath, $"{table.Name}{table.Sources.Count + 1}{Constants.TableFileExtention}");
 
             table.Sources.Add(source);
             using (File.Create(source.Url)) { }

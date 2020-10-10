@@ -27,7 +27,7 @@ namespace DBMS_Core.Infrastructure.Services
             }
         }
 
-        private string _dataBaseFile => $"{DataBase.Name}{FileExtention}";
+        private string _dataBaseFile => $"{DataBase.Name}{DataBaseFileExtention}";
 
         public DataBaseService(string name, string rootPath, long fileSize, SupportedSources source)
         {

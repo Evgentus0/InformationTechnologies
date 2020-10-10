@@ -1,4 +1,5 @@
 ﻿using DBMS.Clients.WinForm.Forms;
+using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using System;
@@ -14,14 +15,16 @@ namespace DBMS.Clients.WinForm.Controls
         private Settings _settings;
 
         private ITableService _tableService;
+        private IDataBaseService _dataBaseService;
 
-        public TableButtonControl(ITableService tableService)
+        public TableButtonControl(ITableService tableService, IDataBaseService dataBaseService)
         {
             _settings = new Settings();
 
             _tableService = tableService;
+            _dataBaseService = dataBaseService;
 
-            Text = tableService.Name;
+            Text = tableService.Table.Name;
 
             InitButton();
 
@@ -34,6 +37,7 @@ namespace DBMS.Clients.WinForm.Controls
                     (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
                         {
                             AddTopMenuButtons();
+                            FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
                             FillDataGrid(_tableService.Select(100, 0));
                         })),
 
@@ -45,14 +49,18 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void AddTopMenuButtons()
         {
-            SharedControls.FlowLayoutPanelTopMenu.Controls.Clear();
-
+            SharedControls.FlowLayoutPanelTopMenu.Controls
+                .Cast<Control>()
+                .Where(x => x.Name.Contains(nameof(TableButtonControl)))
+                .ToList().ForEach(x => SharedControls.FlowLayoutPanelTopMenu.Controls.Remove(x));
+            
             var size = new Size(_settings.TopMenuButtonWidth, _settings.SubButtonHeght);
 
             var buttonConditions = new Button
             {
                 Text = Constants.TableButtonControl.AddConditions,
-                Size = size
+                Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonConditions.Click += ButtonConditions_Click;
 
@@ -60,26 +68,61 @@ namespace DBMS.Clients.WinForm.Controls
             {
                 Text = Constants.TableButtonControl.InsertData,
                 Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonInsert.Click += ButtonInsert_Click;
 
             var buttonDelete = new Button
             {
                 Text = Constants.TableButtonControl.DeleteData,
-                Size = size
+                Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonDelete.Click += ButtonDelete_Click;
 
-            SharedControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[] { buttonConditions, buttonInsert, buttonDelete });
+            var buttonUnion = new Button
+            {
+                Text = Constants.TableButtonControl.UnionTables,
+                Size = size,
+                Name = nameof(TableButtonControl)
+            };
+            buttonUnion.Click += ButtonUnion_Click; ;
+
+            SharedControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[] 
+            { 
+                buttonConditions, 
+                buttonInsert, 
+                buttonDelete, 
+                buttonUnion 
+            });
+        }
+
+        private void ButtonUnion_Click(object sender, EventArgs e)
+        {
+            var form = new UnionTablesForm(_dataBaseService, _tableService);
+            form.ShowDialog();
+            if (form.IsSet)
+            {
+                List<string> headers = new List<string>();
+                for(int i=0;i< _tableService.Table.Schema.Fields.Count; i++)
+                {
+                    headers.Add($"Column {i + 1}({_tableService.Table.Schema.Fields[i].Type.GetName()})");
+                }
+
+                FillColumnHeaders(headers);
+                FillDataGrid(form.Data);
+            }
         }
 
         private void ButtonConditions_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Fields, false);
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, false);
             form.ShowDialog();
 
             if (form.IsSet)
             {
+                FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
+
                 if (form.SelectConditions.Validators.Any())
                 {
                     FillDataGrid(_tableService.Select(form.SelectConditions.Top,
@@ -95,7 +138,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Fields, true);
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, true);
             form.ShowDialog();
 
             if (form.IsSet)
@@ -111,7 +154,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonInsert_Click(object sender, EventArgs e)
         {
-            var form = new InsertForm(_tableService.Fields);
+            var form = new InsertForm(_tableService.Table.Schema.Fields);
             form.ShowDialog();
 
             if (form.IsSet)
@@ -134,9 +177,7 @@ namespace DBMS.Clients.WinForm.Controls
             var dataGrid = SharedControls.DataGrigTable;
             dataGrid.Rows.Clear();
 
-            FillColumnHeaders();
-
-            var fieldCount = _tableService.Fields.Count() + 1;
+            var fieldCount = _tableService.Table.Schema.Fields.Count() + 1;
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
@@ -159,15 +200,15 @@ namespace DBMS.Clients.WinForm.Controls
             }
         }
 
-        private void FillColumnHeaders()
+        private void FillColumnHeaders(List<string> headers)
         {
             var dataGrid = SharedControls.DataGrigTable;
-            var fieldCount = _tableService.Fields.Count();
-            dataGrid.ColumnCount = fieldCount + 1;
+            var columnCount = headers.Count();
+            dataGrid.ColumnCount = headers.Count + 1;
 
-            for (int i = 0; i < fieldCount; i++)
+            for (int i = 0; i < columnCount; i++)
             {
-                dataGrid.Columns[i + 1].Name = _tableService.Fields[i].Name;
+                dataGrid.Columns[i + 1].Name = headers[i];
             }
         }
 
@@ -222,7 +263,7 @@ namespace DBMS.Clients.WinForm.Controls
                     string value = dataGridViewData.SelectedRows[i].Cells[j].Value.ToString();
                     try
                     {
-                        row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Fields[j - 1].Type, value));
+                        row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Table.Schema.Fields[j - 1].Type, value));
                     }
                     catch
                     {

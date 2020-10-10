@@ -15,13 +15,9 @@ namespace DBMS_Core.Infrastructure.Services
 {
     public class TableService : ITableService
     {
-        private Table Table { get;  set; }
+        public Table Table { get;  private set; }
 
         private IFileWorker _fileWorker;
-
-        public string Name => Table.Name;
-
-        public List<Field> Fields => Table.Schema.Fields;
 
         public TableService(Table table, IFileWorker fileWorker)
         {
@@ -125,12 +121,8 @@ namespace DBMS_Core.Infrastructure.Services
 
         public List<List<object>> Union(params Table[] tables)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
-            List<Field> exampleFields = new List<Field>();
-            if(tables.Length > 0)
-            {
-                exampleFields = tables.First().Schema.Fields;
-            }
+            IEnumerable<List<object>> result = _fileWorker.Select(this.Table);
+            List<Field> exampleFields = this.Table.Schema.Fields;
 
             foreach(var table in tables)
             {
@@ -175,6 +167,11 @@ namespace DBMS_Core.Infrastructure.Services
                 return true;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return Table.Name;
         }
     }
 }

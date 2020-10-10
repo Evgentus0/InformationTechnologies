@@ -23,6 +23,7 @@ namespace DBMS.Clients.WinForm
         {
             public const string AddNewTable = "Add new table";
             public const string NewTableName = "New table name";
+            public const string UnionTables = "Union tables";
         }
 
         public static class TableButtonControl
@@ -33,6 +34,7 @@ namespace DBMS.Clients.WinForm
             public const string InsertData = "Insert rows";
             public const string DeleteData = "Delete rows";
             public const string AddConditions = "Select conditions";
+            public const string UnionTables = "Union";
             public const string InsertIncorrectData = "In row number {0} in column {1} value \"{2}\" has incorrect type!";
         }   
 
@@ -65,6 +67,11 @@ namespace DBMS.Clients.WinForm
         {
             public const string DeleteCondition = "Delete condition";
             public const string FieldName = "Field name";
+        }
+
+        public static class UnionForm
+        {
+            public const string DeleteTable = "Delete table";
         }
     }
 }

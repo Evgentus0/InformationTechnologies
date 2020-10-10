@@ -8,8 +8,7 @@ namespace DBMS_Core.Interfaces
 {
     public interface ITableService
     {
-        string Name { get; }
-        List<Field> Fields { get; }
+        Table Table { get; }
         void UpdateSchema();
 
         void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null);

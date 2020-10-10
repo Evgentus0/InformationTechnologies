@@ -147,13 +147,13 @@ namespace DBMS.Clients.WinForm.Forms
         private void DeleteButton_Click(object sender, EventArgs e)
         {
             var button = (Button)sender;
-            var name = button.Name;
+            var nameGuid = button.Name.Split('.').First();
 
-            var combobox = (ComboBox)tableLayoutPanelConditions.Controls.Find(name.Split('.').First() + "." + nameof(ComboBox), false).First();
+            var combobox = (ComboBox)tableLayoutPanelConditions.Controls.Find(nameGuid + "." + nameof(ComboBox), false).First();
             var field = (Field)combobox.SelectedItem;
 
             tableLayoutPanelConditions.Controls.Remove(combobox);
-            tableLayoutPanelConditions.Controls.RemoveByKey(name + "." + _validatorsButton);
+            tableLayoutPanelConditions.Controls.RemoveByKey(nameGuid + "." + _validatorsButton);
             tableLayoutPanelConditions.Controls.Remove(button);
 
             if (SelectConditions.Validators.ContainsKey(field.Name))
