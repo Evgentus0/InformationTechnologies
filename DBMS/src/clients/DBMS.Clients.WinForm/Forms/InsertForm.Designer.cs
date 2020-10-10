@@ -31,6 +31,7 @@
             this.dataGridViewData = new System.Windows.Forms.DataGridView();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonSave = new System.Windows.Forms.Button();
+            this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewData)).BeginInit();
             this.SuspendLayout();
             // 
@@ -41,16 +42,17 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridViewData.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridViewData.Location = new System.Drawing.Point(15, 81);
-            this.dataGridViewData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.dataGridViewData.Margin = new System.Windows.Forms.Padding(4);
             this.dataGridViewData.Name = "dataGridViewData";
             this.dataGridViewData.Size = new System.Drawing.Size(549, 336);
             this.dataGridViewData.TabIndex = 0;
             this.dataGridViewData.Text = "dataGridView1";
+            this.dataGridViewData.CellBeginEdit += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dataGridViewData_CellBeginEdit);
             // 
             // buttonCancel
             // 
             this.buttonCancel.Location = new System.Drawing.Point(13, 13);
-            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(96, 32);
             this.buttonCancel.TabIndex = 1;
@@ -69,6 +71,10 @@
             this.buttonSave.UseVisualStyleBackColor = true;
             this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
+            // 
             // InsertForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
@@ -78,7 +84,7 @@
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.dataGridViewData);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "InsertForm";
             this.Text = "InsertForm";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewData)).EndInit();
@@ -91,5 +97,6 @@
         private System.Windows.Forms.DataGridView dataGridViewData;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonSave;
+        private System.Windows.Forms.OpenFileDialog openFileDialog;
     }
 }

@@ -2,6 +2,7 @@
 using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
+using DBMS_Core.Models.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,18 +18,87 @@ namespace DBMS.Clients.WinForm.Controls
         private ITableService _tableService;
         private IDataBaseService _dataBaseService;
 
+        private OpenFileDialog openFile;
+        private DataGridView dataGrid;
+
         public TableButtonControl(ITableService tableService, IDataBaseService dataBaseService)
         {
             _settings = new Settings();
 
             _tableService = tableService;
             _dataBaseService = dataBaseService;
+            openFile = new OpenFileDialog();
 
             Text = tableService.Table.Name;
 
             InitButton();
 
             InitContextMeniForDataGrid();
+
+            Click += TableButtonControl_Click;
+        }
+
+        private void TableButtonControl_Click(object sender, EventArgs e)
+        {
+            SelectTable();
+        }
+
+        private void SelectTable()
+        {
+            dataGrid = new DataGridView();
+            dataGrid.CellBeginEdit += DataGrigTable_CellBeginEdit;
+            dataGrid.Dock = DockStyle.Fill;
+
+            SharedControls.GroupBoxData.Controls.Clear();
+            SharedControls.GroupBoxData.Controls.Add(dataGrid);
+
+            AddTopMenuButtons();
+            FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
+            FillDataGrid(_tableService.Select(100, 0));
+        }
+
+        private void DataGrigTable_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            var dataGridCurrent = (DataGridView)sender;
+
+            var cell = dataGridCurrent.CurrentCell;
+
+            if (_tableService.Table.Schema.Fields[cell.ColumnIndex - 1].Type == SupportedTypes.Picture)
+            {
+                var result = openFile.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    try
+                    {
+                        string file = openFile.FileName;
+                        var image = Bitmap.FromFile(file);
+
+
+                        var imageCell = new DataGridViewImageCell();
+                        imageCell.Value = image;
+                        imageCell.Tag = file;
+
+                        var form = new InputForm(Constants.TableButtonControl.EnterDescription);
+                        while (!form.IsSet)
+                        {
+                            form.ShowDialog();
+                        }
+                        imageCell.Description = form.Value;
+                        dataGridCurrent.Rows[cell.RowIndex].Cells[cell.ColumnIndex] = imageCell;
+
+                        dataGrid.Columns[imageCell.ColumnIndex].Width = image.Width;
+                        dataGrid.Rows[imageCell.RowIndex].Height = image.Height;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Constants.TableButtonControl.CantOpenFile);
+                }
+            }
         }
 
         private List<(string name, Action<object, EventArgs> action)> MenuItemList =>
@@ -36,9 +106,7 @@ namespace DBMS.Clients.WinForm.Controls
                 {
                     (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
                         {
-                            AddTopMenuButtons();
-                            FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
-                            FillDataGrid(_tableService.Select(100, 0));
+                            SelectTable();
                         })),
 
                     (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
@@ -174,10 +242,10 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void FillDataGrid(IEnumerable<List<object>> rows)
         {
-            var dataGrid = SharedControls.DataGrigTable;
             dataGrid.Rows.Clear();
 
-            var fieldCount = _tableService.Table.Schema.Fields.Count() + 1;
+            var fields = _tableService.Table.Schema.Fields;
+            var fieldCount = fields.Count() + 1;
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
@@ -192,7 +260,22 @@ namespace DBMS.Clients.WinForm.Controls
                 {
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        dataGrid.Rows[rowCount].Cells[i].Value = row[i];
+                        if(i > 0 && fields[i - 1].Type == SupportedTypes.Picture && row[i] != null)
+                        { 
+                            var picture = (Picture)SupportedTypesFactory.GetTypeInstance(SupportedTypes.Picture, row[i].ToString());
+                            var image = Bitmap.FromFile(picture.Path);
+                            var imageCell = new DataGridViewImageCell();
+                            imageCell.Value = image;
+
+                            dataGrid.Rows[rowCount].Cells[i] = imageCell;
+
+                            dataGrid.Rows[rowCount].Height = image.Height;
+                            dataGrid.Columns[i].Width = image.Width;
+                        }
+                        else
+                        {
+                            dataGrid.Rows[rowCount].Cells[i].Value = row[i];
+                        }
                     }
                     rowCount++;
                 }
@@ -202,7 +285,6 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void FillColumnHeaders(List<string> headers)
         {
-            var dataGrid = SharedControls.DataGrigTable;
             var columnCount = headers.Count();
             dataGrid.ColumnCount = headers.Count + 1;
 
@@ -210,6 +292,7 @@ namespace DBMS.Clients.WinForm.Controls
             {
                 dataGrid.Columns[i + 1].Name = headers[i];
             }
+            dataGrid.Columns[0].Visible = false;
         }
 
         private void InitButton()
@@ -231,7 +314,7 @@ namespace DBMS.Clients.WinForm.Controls
         {
             var contextMenu = CommonControlsHelper.GetContextMenuStrip(DataGridMenuList);
 
-            SharedControls.DataGrigTable.ContextMenuStrip = contextMenu;
+            SharedControls.GroupBoxData.ContextMenuStrip = contextMenu;
         }
 
         private List<(string name, Action<object, EventArgs> action)> DataGridMenuList =>
@@ -251,24 +334,36 @@ namespace DBMS.Clients.WinForm.Controls
         {
             var values = new List<List<object>>();
 
-            var dataGridViewData = SharedControls.DataGrigTable;
-
-            for (int i = 0; i < dataGridViewData.SelectedRows.Count; i++)
+            for (int i = 0; i < dataGrid.SelectedRows.Count; i++)
             {
                 var row = new List<object>();
-                row.Add(Guid.Parse(dataGridViewData.SelectedRows[i].Cells[0].Value.ToString()));
+                row.Add(Guid.Parse(dataGrid.SelectedRows[i].Cells[0].Value.ToString()));
 
-                for (var j = 1; j < dataGridViewData.Columns.Count; j++)
+                for (var j = 1; j < dataGrid.Columns.Count; j++)
                 {
-                    string value = dataGridViewData.SelectedRows[i].Cells[j].Value.ToString();
-                    try
+                    if(_tableService.Table.Schema.Fields[j-1].Type == SupportedTypes.Picture)
                     {
-                        row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Table.Schema.Fields[j - 1].Type, value));
+                        var cell = (DataGridViewImageCell)dataGrid.Rows[i].Cells[j];
+
+                        var picture = new Picture
+                        {
+                            Description = cell.Description,
+                            Path = (string)cell.Tag
+                        };
+                        row.Add(picture);
                     }
-                    catch
+                    else
                     {
-                        MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j, value));
-                        return;
+                        string value = dataGrid.SelectedRows[i].Cells[j].Value.ToString();
+                        try
+                        {
+                            row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Table.Schema.Fields[j - 1].Type, value));
+                        }
+                        catch
+                        {
+                            MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j, value));
+                            return;
+                        }
                     }
                 }
                 values.Add(row);
@@ -279,8 +374,6 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void DeleteSelectedRows()
         {
-            var dataGrid = SharedControls.DataGrigTable;
-
             var ids = dataGrid.SelectedRows.Cast<DataGridViewRow>().Select(x => Guid.Parse(x.Cells[0].Value.ToString()));
 
             foreach (DataGridViewRow row in dataGrid.SelectedRows)

@@ -20,7 +20,7 @@ namespace DBMS.Clients.WinForm
             InitializeComponent();
             InitMenu();
             SharedControls.FlowLayoutPanelLeftMenu = flowLayoutPanelMenu;
-            SharedControls.DataGrigTable = dataGridViewMain;
+            SharedControls.GroupBoxData = groupBoxGrid;
             SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
 
             _formManager = new DbFormManager();

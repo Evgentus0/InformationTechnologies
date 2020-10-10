@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DBMS_Core.Models.Types
 {
@@ -8,6 +10,7 @@ namespace DBMS_Core.Models.Types
     {
         public string Description { get; set; }
         public string Path { get; set; }
-        public int Size { get; set; }
+        [JsonIgnore]
+        public long Size => new FileInfo(Path).Length;
     }
 }
