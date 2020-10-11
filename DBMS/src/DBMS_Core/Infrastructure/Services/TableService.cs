@@ -9,12 +9,13 @@ using System.Text;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Validators;
+using System.Runtime.CompilerServices;
 
 namespace DBMS_Core.Infrastructure.Services
 {
     public class TableService : ITableService
     {
-        public Table Table { get; private set; }
+        public Table Table { get;  private set; }
 
         private IFileWorker _fileWorker;
 
@@ -24,6 +25,24 @@ namespace DBMS_Core.Infrastructure.Services
 
             _fileWorker = fileWorker;
         }
+
+        public void UpdateSchema()
+        {
+            _fileWorker.UpdateDataBaseFile();
+        }
+
+        public void UpdateRows(List<List<object>> rows)
+        {
+            for(int i = 0; i < rows.Count; i++)
+            {
+                if(!ValidateDataTypes(rows[i].Skip(1).ToList()))
+                    throw new ArgumentException("Incorrect data types! Expected: " +
+                    Table.Schema.Fields.Select(x => x.Type.GetName()).Aggregate((x, y) => $"{x}, {y}"));
+            }
+
+            _fileWorker.UpdateRows(Table, rows);
+        }
+
         public void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null)
         {
             if (Table.Schema.Fields.Select(x => x.Name.ToLower()).Any(x => x == name.ToLower()))
@@ -32,7 +51,7 @@ namespace DBMS_Core.Infrastructure.Services
             Table.Schema.Fields.Add(new Field { Name = name, Type = type, Validators = validators });
             _fileWorker.UpdateDataBaseFile();
 
-            _fileWorker.AddNewColoumn(Table);
+            _fileWorker.AddNewColoumn(Table, type);
         }
 
         public void AddNewField(Field field)
@@ -40,13 +59,13 @@ namespace DBMS_Core.Infrastructure.Services
             Table.Schema.Fields.Add(field);
             _fileWorker.UpdateDataBaseFile();
 
-            _fileWorker.AddNewColoumn(Table);
+            _fileWorker.AddNewColoumn(Table, field.Type);
         }
 
         public void DeleteField(string name)
         {
             var field = Table.Schema.Fields.Find(x => x.Name == name);
-            var index = Table.Schema.Fields.IndexOf(field);
+            var index = Table.Schema.Fields.IndexOf(field) + 1;
             Table.Schema.Fields.Remove(field);
             _fileWorker.UpdateDataBaseFile();
 
@@ -56,6 +75,10 @@ namespace DBMS_Core.Infrastructure.Services
         public void DeleteRows(Dictionary<string, List<IValidator>> conditions)
         { 
             _fileWorker.DeleteRows(Table, conditions);
+        }
+        public void DeleteRows(List<Guid> ids)
+        {
+            _fileWorker.DeleteRows(Table, ids);
         }
 
         public void InsertData(List<object> row)
@@ -76,34 +99,30 @@ namespace DBMS_Core.Infrastructure.Services
             _fileWorker.InsertData(Table, rows);
         }
 
-        public IEnumerable<List<object>> Select()
+        public List<List<object>> Select()
         {
             return _fileWorker.Select(Table);
         }
 
-        public IEnumerable<List<object>> Select(int top, int offset)
+        public List<List<object>> Select(int top, int offset)
         {
             return _fileWorker.Select(Table, top, offset);
         }
 
-        public IEnumerable<List<object>> Select(Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Dictionary<string, List<IValidator>> conditions)
         {
             return _fileWorker.Select(Table, conditions);
         }
 
-        public IEnumerable<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(int top, int offset, Dictionary<string, List<IValidator>> conditions)
         {
             return _fileWorker.Select(Table, top, offset, conditions);
         }
 
         public List<List<object>> Union(params Table[] tables)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
-            List<Field> exampleFields = new List<Field>();
-            if(tables.Length > 0)
-            {
-                exampleFields = tables.First().Schema.Fields;
-            }
+            IEnumerable<List<object>> result = _fileWorker.Select(this.Table);
+            List<Field> exampleFields = this.Table.Schema.Fields;
 
             foreach(var table in tables)
             {
@@ -148,6 +167,11 @@ namespace DBMS_Core.Infrastructure.Services
                 return true;
             }
             return false;
+        }
+
+        public override string ToString()
+        {
+            return Table.Name;
         }
     }
 }

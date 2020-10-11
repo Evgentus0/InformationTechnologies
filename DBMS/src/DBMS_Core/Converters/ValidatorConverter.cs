@@ -13,22 +13,29 @@ namespace DBMS_Core.Converters
     {
         public override bool CanConvert(Type typeToConvert)
         {
-            return base.CanConvert(typeToConvert);
+            return typeToConvert == typeof(List<IValidator>);
         }
 
         public override List<IValidator> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             var jsonObject = JsonDocument.ParseValue(ref reader);
 
-            var result = jsonObject.RootElement.EnumerateArray().Select(x =>
+            var array = JsonSerializer.Deserialize<JsonElement>(jsonObject.RootElement.GetString());
+            var result = array.EnumerateArray().Select(x =>
             {
-                var sourceType = Type.GetType(x.GetProperty(Constants.TypeProperty).GetString());
-                var element = JsonSerializer.Deserialize(x.GetRawText(), sourceType);
+                var validatorType = Type.GetType(x.GetProperty(Constants.TypeProperty).GetString());
+                var element = JsonSerializer.Deserialize(x.GetRawText(), validatorType);
+                IValidator validatorElement = (IValidator)element;
+                validatorElement.Operation = x.GetProperty("operation").GetInt32();
+
+                var valueType = Type.GetType(x.GetProperty("valueType").GetString());
+                validatorElement.Value = JsonSerializer.Deserialize(x.GetProperty("value").GetRawText(), valueType);
+                validatorElement.InitializeWithProperty();
 
                 return (IValidator)element;
             });
 
-            return (List<IValidator>)result;
+            return result.ToList();
         }
 
         public override void Write(Utf8JsonWriter writer, List<IValidator> value, JsonSerializerOptions options)

@@ -7,10 +7,11 @@ namespace DBMS_Core.Interfaces
 {
     public interface IDataBaseService
     {
-        DataBase DataBase { get; }
+        string Name { get; }
         ITableService this[string key] { get; }
         void AddTable(string tableName);
         void AddTable(string tableName, TableSchema schema);
         void DeleteTable(string tableName);
+        IEnumerable<ITableService> GetTables();
     }
 }

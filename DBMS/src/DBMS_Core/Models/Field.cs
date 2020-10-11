@@ -15,12 +15,18 @@ namespace DBMS_Core.Models
         [JsonPropertyName("type")]
         public SupportedTypes Type { get; set; }
         [JsonPropertyName("validators")]
-        
+        [JsonConverter(typeof(ValidatorConverter))]
+
         public List<IValidator> Validators { get; set; }
 
         public Field()
         {
             Validators = new List<IValidator>();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

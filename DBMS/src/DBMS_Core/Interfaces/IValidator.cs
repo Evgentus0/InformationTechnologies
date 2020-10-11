@@ -8,11 +8,15 @@ namespace DBMS_Core.Interfaces
     public interface IValidator
     {
         [JsonPropertyName("value")]
-        object Value { get; }
+        object Value { get; set; }
         [JsonPropertyName("operation")]
-        int Operation { get; }
+        int Operation { get; set; }
         [JsonPropertyName(Constants.TypeProperty)]
         string Type { get; }
+        [JsonPropertyName("valueType")]
+        string ValueType { get; }
+        string OperationType { get; }
+        void InitializeWithProperty();
 
         bool IsValid(object value); 
     }
