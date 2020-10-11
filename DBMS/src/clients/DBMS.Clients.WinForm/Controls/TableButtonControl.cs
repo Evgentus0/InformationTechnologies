@@ -1,5 +1,8 @@
 ﻿using DBMS.Clients.WinForm.Forms;
+using DBMS_Core.Extentions;
+using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
+using DBMS_Core.Models.Types;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,16 +16,89 @@ namespace DBMS.Clients.WinForm.Controls
         private Settings _settings;
 
         private ITableService _tableService;
+        private IDataBaseService _dataBaseService;
 
-        public TableButtonControl(ITableService tableService)
+        private OpenFileDialog openFile;
+        private DataGridView dataGrid;
+
+        public TableButtonControl(ITableService tableService, IDataBaseService dataBaseService)
         {
             _settings = new Settings();
 
             _tableService = tableService;
+            _dataBaseService = dataBaseService;
+            openFile = new OpenFileDialog();
 
-            Text = tableService.Name;
+            dataGrid = new DataGridView();
+            dataGrid.CellBeginEdit += DataGrigTable_CellBeginEdit;
+            dataGrid.Dock = DockStyle.Fill;
+
+            Text = tableService.Table.Name;
 
             InitButton();
+
+            InitContextMeniForDataGrid();
+
+            Click += TableButtonControl_Click;
+        }
+
+        private void TableButtonControl_Click(object sender, EventArgs e)
+        {
+            SelectTable();
+        }
+
+        private void SelectTable()
+        {
+            SharedControls.GroupBoxData.Controls.Clear();
+            SharedControls.GroupBoxData.Controls.Add(dataGrid);
+
+            AddTopMenuButtons();
+            FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
+            FillDataGrid(_tableService.Select(100, 0));
+        }
+
+        private void DataGrigTable_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            var dataGridCurrent = (DataGridView)sender;
+
+            var cell = dataGridCurrent.CurrentCell;
+
+            if (_tableService.Table.Schema.Fields[cell.ColumnIndex - 1].Type == SupportedTypes.Picture)
+            {
+                var result = openFile.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    try
+                    {
+                        string file = openFile.FileName;
+                        var image = Bitmap.FromFile(file);
+
+
+                        var imageCell = new DataGridViewImageCell();
+                        imageCell.Value = image;
+                        imageCell.Tag = file;
+
+                        var form = new InputForm(Constants.TableButtonControl.EnterDescription);
+                        while (!form.IsSet)
+                        {
+                            form.ShowDialog();
+                        }
+                        imageCell.Description = form.Value;
+                        dataGridCurrent.Rows[cell.RowIndex].Cells[cell.ColumnIndex] = imageCell;
+
+                        dataGrid.Columns[imageCell.ColumnIndex].Width = image.Width;
+                        dataGrid.Rows[imageCell.RowIndex].Height = image.Height;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(Constants.TableButtonControl.CantOpenFile);
+                }
+            }
         }
 
         private List<(string name, Action<object, EventArgs> action)> MenuItemList =>
@@ -30,8 +106,7 @@ namespace DBMS.Clients.WinForm.Controls
                 {
                     (Constants.TableButtonControl.Select, new Action<object, EventArgs>((o, f) =>
                         {
-                            AddTopMenuButtons();
-                            FillDataGrid(_tableService.Select(100, 0));
+                            SelectTable();
                         })),
 
                     (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
@@ -42,12 +117,18 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void AddTopMenuButtons()
         {
+            SharedControls.FlowLayoutPanelTopMenu.Controls
+                .Cast<Control>()
+                .Where(x => x.Name.Contains(nameof(TableButtonControl)))
+                .ToList().ForEach(x => SharedControls.FlowLayoutPanelTopMenu.Controls.Remove(x));
+
             var size = new Size(_settings.TopMenuButtonWidth, _settings.SubButtonHeght);
 
             var buttonConditions = new Button
             {
                 Text = Constants.TableButtonControl.AddConditions,
-                Size = size
+                Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonConditions.Click += ButtonConditions_Click;
 
@@ -55,26 +136,61 @@ namespace DBMS.Clients.WinForm.Controls
             {
                 Text = Constants.TableButtonControl.InsertData,
                 Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonInsert.Click += ButtonInsert_Click;
 
             var buttonDelete = new Button
             {
                 Text = Constants.TableButtonControl.DeleteData,
-                Size = size
+                Size = size,
+                Name = nameof(TableButtonControl)
             };
             buttonDelete.Click += ButtonDelete_Click;
 
-            SharedControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[] { buttonConditions, buttonInsert, buttonDelete });
+            var buttonUnion = new Button
+            {
+                Text = Constants.TableButtonControl.UnionTables,
+                Size = size,
+                Name = nameof(TableButtonControl)
+            };
+            buttonUnion.Click += ButtonUnion_Click; ;
+
+            SharedControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[]
+            {
+                buttonConditions,
+                buttonInsert,
+                buttonDelete,
+                buttonUnion
+            });
+        }
+
+        private void ButtonUnion_Click(object sender, EventArgs e)
+        {
+            var form = new UnionTablesForm(_dataBaseService, _tableService);
+            form.ShowDialog();
+            if (form.IsSet)
+            {
+                List<string> headers = new List<string>();
+                for (int i = 0; i < _tableService.Table.Schema.Fields.Count; i++)
+                {
+                    headers.Add($"Column {i + 1}({_tableService.Table.Schema.Fields[i].Type.GetName()})");
+                }
+
+                FillColumnHeaders(headers);
+                FillDataGrid(form.Data);
+            }
         }
 
         private void ButtonConditions_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Fields);
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, false);
             form.ShowDialog();
 
             if (form.IsSet)
             {
+                FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
+
                 if (form.SelectConditions.Validators.Any())
                 {
                     FillDataGrid(_tableService.Select(form.SelectConditions.Top,
@@ -90,12 +206,31 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, true);
+            form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                if (form.SelectConditions.Validators.Any())
+                {
+                    _tableService.DeleteRows(form.SelectConditions.Validators);
+
+                    FillDataGrid(_tableService.Select(100, 0));
+                }
+            }
         }
 
         private void ButtonInsert_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            var form = new InsertForm(_tableService.Table.Schema.Fields);
+            form.ShowDialog();
+
+            if (form.IsSet)
+            {
+                _tableService.InsertDataRange(form.Values);
+
+                FillDataGrid(_tableService.Select(100, 0));
+            }
         }
 
         private void EditTableShema()
@@ -107,12 +242,10 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void FillDataGrid(IEnumerable<List<object>> rows)
         {
-            var dataGrid = SharedControls.DataGrigTable;
             dataGrid.Rows.Clear();
 
-            FillColumnHeaders();
-
-            var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
+            var fields = _tableService.Table.Schema.Fields;
+            var fieldCount = fields.Count() + 1;
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
@@ -127,22 +260,39 @@ namespace DBMS.Clients.WinForm.Controls
                 {
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        dataGrid.Rows[rowCount].Cells[i].Value = row[i];
+                        if (i > 0 && fields[i - 1].Type == SupportedTypes.Picture && row[i] != null)
+                        {
+                            var picture = (Picture)SupportedTypesFactory.GetTypeInstance(SupportedTypes.Picture, row[i].ToString());
+                            var image = Bitmap.FromFile(picture.Path);
+                            var imageCell = new DataGridViewImageCell();
+                            imageCell.Value = image;
+
+                            dataGrid.Rows[rowCount].Cells[i] = imageCell;
+
+                            dataGrid.Rows[rowCount].Height = image.Height;
+                            dataGrid.Columns[i].Width = image.Width;
+                        }
+                        else
+                        {
+                            dataGrid.Rows[rowCount].Cells[i].Value = row[i];
+                        }
                     }
                     rowCount++;
                 }
+                dataGrid.Columns[0].Visible = false;
             }
         }
 
-        private void FillColumnHeaders()
+        private void FillColumnHeaders(List<string> headers)
         {
-            var dataGrid = SharedControls.DataGrigTable;
-            var fieldCount = dataGrid.ColumnCount = _tableService.Fields.Count();
+            var columnCount = headers.Count();
+            dataGrid.ColumnCount = headers.Count + 1;
 
-            for (int i = 0; i < fieldCount; i++)
+            for (int i = 0; i < columnCount; i++)
             {
-                dataGrid.Columns[i].Name = _tableService.Fields[i].Name;
+                dataGrid.Columns[i + 1].Name = headers[i];
             }
+            dataGrid.Columns[0].Visible = false;
         }
 
         private void InitButton()
@@ -158,6 +308,82 @@ namespace DBMS.Clients.WinForm.Controls
             var contextMenu = CommonControlsHelper.GetContextMenuStrip(MenuItemList);
 
             ContextMenuStrip = contextMenu;
+        }
+
+        private void InitContextMeniForDataGrid()
+        {
+            var contextMenu = CommonControlsHelper.GetContextMenuStrip(DataGridMenuList);
+
+            dataGrid.ContextMenuStrip = contextMenu;
+        }
+
+        private List<(string name, Action<object, EventArgs> action)> DataGridMenuList =>
+            new List<(string name, Action<object, EventArgs> action)>
+            {
+                (Constants.MainForm.DeleteSelectedRows, new Action<object, EventArgs>((o, f) =>
+                    {
+                        DeleteSelectedRows();
+                    })),
+                (Constants.MainForm.UspdateRow, new Action<object, EventArgs>((o, f) =>
+                    {
+                        UpdateSelectedRows();
+                    })),
+            };
+
+        private void UpdateSelectedRows()
+        {
+            var values = new List<List<object>>();
+
+            for (int i = 0; i < dataGrid.SelectedRows.Count; i++)
+            {
+                var row = new List<object>();
+                row.Add(Guid.Parse(dataGrid.SelectedRows[i].Cells[0].Value.ToString()));
+
+                for (var j = 1; j < dataGrid.Columns.Count; j++)
+                {
+                    if (_tableService.Table.Schema.Fields[j - 1].Type == SupportedTypes.Picture && dataGrid.SelectedRows[i].Cells[j].Value != null)
+                    {
+
+                        var imageCell = (DataGridViewImageCell)dataGrid.SelectedRows[i].Cells[j];
+
+                        var picture = new Picture
+                        {
+                            Description = imageCell.Description,
+                            Path = (string)imageCell.Tag
+                        };
+                        row.Add(picture);
+
+                    }
+                    else
+                    {
+                        string value = dataGrid.SelectedRows[i].Cells[j].Value?.ToString();
+                        try
+                        {
+                            row.Add(SupportedTypesFactory.GetTypeInstance(_tableService.Table.Schema.Fields[j - 1].Type, value));
+                        }
+                        catch
+                        {
+                            MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j, value));
+                            return;
+                        }
+                    }
+                }
+                values.Add(row);
+            }
+
+            _tableService.UpdateRows(values);
+        }
+
+        private void DeleteSelectedRows()
+        {
+            var ids = dataGrid.SelectedRows.Cast<DataGridViewRow>().Select(x => Guid.Parse(x.Cells[0].Value.ToString()));
+
+            foreach (DataGridViewRow row in dataGrid.SelectedRows)
+            {
+                dataGrid.Rows.Remove(row);
+            }
+
+            _tableService.DeleteRows(ids.ToList());
         }
     }
 }

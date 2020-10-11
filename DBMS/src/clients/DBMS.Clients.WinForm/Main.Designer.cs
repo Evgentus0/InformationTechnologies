@@ -29,11 +29,10 @@
         private void InitializeComponent()
         {
             this.flowLayoutPanelMenu = new System.Windows.Forms.FlowLayoutPanel();
-            this.dataGridViewMain = new System.Windows.Forms.DataGridView();
             this.menuStripTop = new System.Windows.Forms.MenuStrip();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.flowLayoutPanelTopMenu = new System.Windows.Forms.FlowLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMain)).BeginInit();
+            this.groupBoxGrid = new System.Windows.Forms.GroupBox();
             this.SuspendLayout();
             // 
             // flowLayoutPanelMenu
@@ -45,19 +44,6 @@
             this.flowLayoutPanelMenu.Name = "flowLayoutPanelMenu";
             this.flowLayoutPanelMenu.Size = new System.Drawing.Size(230, 719);
             this.flowLayoutPanelMenu.TabIndex = 0;
-            // 
-            // dataGridViewMain
-            // 
-            this.dataGridViewMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewMain.BackgroundColor = System.Drawing.SystemColors.ControlLight;
-            this.dataGridViewMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewMain.Location = new System.Drawing.Point(235, 113);
-            this.dataGridViewMain.Name = "dataGridViewMain";
-            this.dataGridViewMain.Size = new System.Drawing.Size(786, 615);
-            this.dataGridViewMain.TabIndex = 1;
-            this.dataGridViewMain.Text = "dataGridView1";
             // 
             // menuStripTop
             // 
@@ -79,13 +65,25 @@
             this.flowLayoutPanelTopMenu.Size = new System.Drawing.Size(786, 100);
             this.flowLayoutPanelTopMenu.TabIndex = 3;
             // 
+            // groupBoxGrid
+            // 
+            this.groupBoxGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxGrid.Location = new System.Drawing.Point(230, 113);
+            this.groupBoxGrid.Name = "groupBoxGrid";
+            this.groupBoxGrid.Size = new System.Drawing.Size(803, 630);
+            this.groupBoxGrid.TabIndex = 4;
+            this.groupBoxGrid.TabStop = false;
+            this.groupBoxGrid.Text = "Data";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1033, 743);
+            this.Controls.Add(this.groupBoxGrid);
             this.Controls.Add(this.flowLayoutPanelTopMenu);
-            this.Controls.Add(this.dataGridViewMain);
             this.Controls.Add(this.flowLayoutPanelMenu);
             this.Controls.Add(this.menuStripTop);
             this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
@@ -94,7 +92,6 @@
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Main";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewMain)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -103,9 +100,9 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelMenu;
-        private System.Windows.Forms.DataGridView dataGridViewMain;
         private System.Windows.Forms.MenuStrip menuStripTop;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanelTopMenu;
+        private System.Windows.Forms.GroupBox groupBoxGrid;
     }
 }

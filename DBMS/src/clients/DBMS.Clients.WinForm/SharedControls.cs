@@ -9,6 +9,6 @@ namespace DBMS.Clients.WinForm
     {
         public static FlowLayoutPanel FlowLayoutPanelLeftMenu;
         public static FlowLayoutPanel FlowLayoutPanelTopMenu;
-        public static DataGridView DataGrigTable;
+        public static GroupBox GroupBoxData;
     }
 }

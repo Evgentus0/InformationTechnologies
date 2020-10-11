@@ -2,6 +2,7 @@
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
+using DBMS_Core.Models.Types;
 using DBMS_Core.Sources;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace DBMS_Core.Infrastructure.FileStore
             return dataBase;
         }
 
-        public void AddNewColoumn(Table table)
+        public void AddNewColoumn(Table table, SupportedTypes type)
         {
             if (table.Sources.IsNullOrEmpty())
             {
@@ -40,7 +41,7 @@ namespace DBMS_Core.Infrastructure.FileStore
             Parallel.ForEach(table.Sources, (source) =>
             {
                 var data = source.GetData();
-                data?.ForEach(x => x.Add(new object()));
+                data?.ForEach(x => x.Add(type.GetDefaultValue()));
 
                 source.WriteData(data);
             });
@@ -77,7 +78,7 @@ namespace DBMS_Core.Infrastructure.FileStore
                     foreach (var condition in conditions)
                     {
                         var field = table.Schema.Fields.Find(x => x.Name == condition.Key);
-                        var index = table.Schema.Fields.IndexOf(field);
+                        var index = table.Schema.Fields.IndexOf(field) + 1;
 
                         if (!PassAllValidators(condition.Value, element[index]))
                         {
@@ -86,6 +87,23 @@ namespace DBMS_Core.Infrastructure.FileStore
                     }
                     return true;
                 });
+
+                source.WriteData(data);
+            });
+        }
+
+
+        public void DeleteRows(Table table, List<Guid> ids)
+        {
+            if (table.Sources.IsNullOrEmpty())
+            {
+                throw new Exception("The table is empty!");
+            }
+
+            Parallel.ForEach(table.Sources, (source) =>
+            {
+                var data = source.GetData();
+                data.RemoveAll(element => ids.Contains(Guid.Parse(element[0].ToString())));
 
                 source.WriteData(data);
             });
@@ -125,8 +143,13 @@ namespace DBMS_Core.Infrastructure.FileStore
                     return true;
                 }).ToList();
 
+                rows.ForEach(x => x.Insert(0, Guid.NewGuid()));
+
                 var source = table.Sources.Last();
-                source.WriteData(rows);
+
+                var data = source.GetData();
+                data.AddRange(rows);
+                source.WriteData(data);
             }
 
         }
@@ -190,7 +213,7 @@ namespace DBMS_Core.Infrastructure.FileStore
                     foreach (var condition in conditions)
                     {
                         var field = table.Schema.Fields.Find(x => x.Name == condition.Key);
-                        var index = table.Schema.Fields.IndexOf(field);
+                        var index = table.Schema.Fields.IndexOf(field) + 1;
 
                         if (!PassAllValidators(condition.Value, element[index]))
                         {
@@ -221,7 +244,7 @@ namespace DBMS_Core.Infrastructure.FileStore
                     foreach (var condition in conditions)
                     {
                         var field = table.Schema.Fields.Find(x => x.Name == condition.Key);
-                        var index = table.Schema.Fields.IndexOf(field);
+                        var index = table.Schema.Fields.IndexOf(field) + 1;
 
                         if (!PassAllValidators(condition.Value, element[index]))
                         {
@@ -243,7 +266,26 @@ namespace DBMS_Core.Infrastructure.FileStore
         {
             var stringData = JsonSerializer.Serialize(DataBase);
 
-            File.WriteAllText($"{DataBase.Settings.RootPath}\\{DataBase.Name}{Constants.FileExtention}", stringData);
+            File.WriteAllText($"{DataBase.Settings.RootPath}\\{DataBase.Name}{Constants.DataBaseFileExtention}", stringData);
+        }
+
+        public void UpdateRows(Table table, List<List<object>> rows)
+        {
+            if (table.Sources.IsNullOrEmpty())
+            {
+                throw new Exception("The table is empty!");
+            }
+
+            Parallel.ForEach(table.Sources, (source) =>
+            {
+                var data = source.GetData();
+                var ids = rows.Select(x => (Guid)x[0]);
+
+                data.RemoveAll(element => ids.Contains(Guid.Parse(element[0].ToString())));
+                data.AddRange(rows.Where(x => ids.Contains((Guid)x[0])));
+
+                source.WriteData(data);
+            });
         }
 
         private bool PassAllValidators(List<IValidator> validators, object value)
@@ -264,7 +306,7 @@ namespace DBMS_Core.Infrastructure.FileStore
         private void AddNewSource(Table table)
         {
             var source = SourceFactory.GetSourceObject(DataBase.Settings.DefaultSource,
-                    DataBase.Settings.RootPath, $"{table.Name}{table.Sources.Count + 1}{Constants.FileExtention}");
+                    DataBase.Settings.RootPath, $"{table.Name}{table.Sources.Count + 1}{Constants.TableFileExtention}");
 
             table.Sources.Add(source);
             using (File.Create(source.Url)) { }

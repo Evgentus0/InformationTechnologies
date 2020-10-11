@@ -34,7 +34,7 @@ namespace DBMS.Clients.WinForm.Forms
 
             InsertHeader();
 
-            foreach (var field in _tableService.Fields)
+            foreach (var field in _tableService.Table.Schema.Fields)
             {
                 AddExistingFieldRedactor(field);
             }

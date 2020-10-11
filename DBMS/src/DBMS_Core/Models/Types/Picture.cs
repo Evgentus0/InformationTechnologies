@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DBMS_Core.Models.Types
 {
-    internal class Picture
+    public class Picture
     {
         public string Description { get; set; }
         public string Path { get; set; }
-        public int Size { get; set; }
+        [JsonIgnore]
+        public long Size => new FileInfo(Path).Length;
     }
 }

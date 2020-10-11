@@ -15,12 +15,15 @@ namespace DBMS.Clients.WinForm
             public const string Instruction = "Instruction";
             public const string Open = "Open DB file";
             public const string CreateNew = "Create new DataBase";
+            public const string DeleteSelectedRows = "Delete selected rows";
+            public const string UspdateRow = "Update selected rows";
         }
 
         public static class DbPanelControl
         {
             public const string AddNewTable = "Add new table";
             public const string NewTableName = "New table name";
+            public const string UnionTables = "Union tables";
         }
 
         public static class TableButtonControl
@@ -31,6 +34,10 @@ namespace DBMS.Clients.WinForm
             public const string InsertData = "Insert rows";
             public const string DeleteData = "Delete rows";
             public const string AddConditions = "Select conditions";
+            public const string UnionTables = "Union";
+            public const string InsertIncorrectData = "In row number {0} in column {1} value \"{2}\" has incorrect type!";
+            public const string CantOpenFile= "Can not open file";
+            public const string EnterDescription = "Enter description";
         }   
 
         public static class EnterNewDb
@@ -55,12 +62,18 @@ namespace DBMS.Clients.WinForm
             public const string Operation = "Operation";
             public const string Value = "Value";
             public const string DeleteValidator = "Delete validator";
+            public const string ValidatorIsNotAvailable = "Validator for this type is not available";
         }
 
         public static class SelectConditions
         {
             public const string DeleteCondition = "Delete condition";
             public const string FieldName = "Field name";
+        }
+
+        public static class UnionForm
+        {
+            public const string DeleteTable = "Delete table";
         }
     }
 }

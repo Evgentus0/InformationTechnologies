@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
+using DBMS_Core.Extentions;
 
 namespace DBMS.Clients.WinForm.Forms
 {
@@ -20,6 +21,7 @@ namespace DBMS.Clients.WinForm.Forms
         public ValidatorsForm(List<IValidator> validators, SupportedTypes type, bool isDisabled)
         {
             InitializeComponent();
+
             Validators = validators ?? new List<IValidator>();
             _settings = new Settings();
             _type = type;
@@ -116,6 +118,16 @@ namespace DBMS.Clients.WinForm.Forms
                 Validators.Add(form.Validator);
 
                 SetValidators();
+            }
+        }
+
+        private void ValidatorsForm_Load(object sender, EventArgs e)
+        {
+            if (!_type.IsValidatorAvailable())
+            {
+                MessageBox.Show(Constants.ValidatorsForm.ValidatorIsNotAvailable);
+                Close();
+                return;
             }
         }
     }

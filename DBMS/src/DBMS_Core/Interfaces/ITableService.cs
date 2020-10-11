@@ -8,8 +8,7 @@ namespace DBMS_Core.Interfaces
 {
     public interface ITableService
     {
-        string Name { get; }
-        List<Field> Fields { get; }
+        Table Table { get; }
         void UpdateSchema();
 
         void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null);
@@ -18,7 +17,9 @@ namespace DBMS_Core.Interfaces
 
         void InsertData(List<object> row);
         void InsertDataRange(List<List<object>> rows);
+        void UpdateRows(List<List<object>> rows);
         void DeleteRows(Dictionary<string, List<IValidator>> conditions);
+        void DeleteRows(List<Guid> ids);
         //void UpdateRow(Dictionary<string, object> keyValues, List<List<object>> rows);
 
         List<List<object>> Select();

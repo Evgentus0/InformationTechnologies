@@ -29,7 +29,7 @@ namespace DBMS_Core.Sources
             var data = File.ReadAllText(Url);
             if (string.IsNullOrEmpty(data))
             {
-                return null;
+                return new List<List<object>>();
             }
 
             var result = JsonSerializer.Deserialize<List<List<object>>>(data);
@@ -41,12 +41,7 @@ namespace DBMS_Core.Sources
         {
             if (!(data == null || data.Count == 0))
             {
-                var stringData = File.ReadAllText(Url);
-                List<List<object>> currentData = string.IsNullOrEmpty(stringData) ? new List<List<object>>()
-                    : JsonSerializer.Deserialize<List<List<object>>>(stringData);
-
-                currentData.AddRange(data);
-                var newStringData = JsonSerializer.Serialize(currentData);
+                var newStringData = JsonSerializer.Serialize(data);
 
                 File.WriteAllText(Url, newStringData);
             }
@@ -56,12 +51,9 @@ namespace DBMS_Core.Sources
         {
             if (!(data == null || data.Count == 0))
             {
-                using (var streamData = File.OpenRead(Url))
+                using (var streamData = File.OpenWrite(Url))
                 {
-                    List<List<object>> currentData = await JsonSerializer.DeserializeAsync<List<List<object>>>(streamData);
-
-                    currentData.AddRange(data);
-                    await JsonSerializer.SerializeAsync(streamData,currentData);
+                    await JsonSerializer.SerializeAsync(streamData, data);
                 }
             }
         }
