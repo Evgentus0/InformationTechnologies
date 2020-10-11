@@ -46,7 +46,7 @@ namespace DBMS_Core.Infrastructure.Factories
                         };
                     }
                 }),
-                [SupportedTypes.Picture] = new Func<string, object>(x => JsonSerializer.Deserialize<Picture>(x))
+                [SupportedTypes.Picture] = new Func<string, object>(x => string.IsNullOrEmpty(x) ? null : JsonSerializer.Deserialize<Picture>(x))
             };
     }
 }
