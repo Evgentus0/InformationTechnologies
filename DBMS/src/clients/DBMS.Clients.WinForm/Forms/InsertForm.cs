@@ -54,7 +54,7 @@ namespace DBMS.Clients.WinForm.Forms
 
                 for(var j = 0; j < dataGridViewData.Columns.Count; j++)
                 {
-                    if(_fields[j].Type == SupportedTypes.Picture)
+                    if(_fields[j].Type == SupportedTypes.Picture && dataGridViewData.Rows[i].Cells[j].Value != null)
                     {
                         var cell = (DataGridViewImageCell)dataGridViewData.Rows[i].Cells[j];
 
@@ -68,7 +68,7 @@ namespace DBMS.Clients.WinForm.Forms
 
                     else
                     {
-                        string value = dataGridViewData.Rows[i].Cells[j].Value.ToString();
+                        string value = dataGridViewData.Rows[i].Cells[j].Value?.ToString();
                         try
                         {
                             row.Add(SupportedTypesFactory.GetTypeInstance(_fields[j].Type, value));

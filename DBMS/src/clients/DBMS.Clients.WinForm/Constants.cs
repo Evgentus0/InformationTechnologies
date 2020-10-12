@@ -38,6 +38,7 @@ namespace DBMS.Clients.WinForm
             public const string InsertIncorrectData = "In row number {0} in column {1} value \"{2}\" has incorrect type!";
             public const string CantOpenFile= "Can not open file";
             public const string EnterDescription = "Enter description";
+            public const string UpdatedSuccess = "Rows was updated successfuly";
         }   
 
         public static class EnterNewDb

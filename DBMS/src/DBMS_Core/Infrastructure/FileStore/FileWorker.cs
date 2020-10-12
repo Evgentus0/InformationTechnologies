@@ -282,7 +282,7 @@ namespace DBMS_Core.Infrastructure.FileStore
                 var ids = rows.Select(x => (Guid)x[0]);
 
                 data.RemoveAll(element => ids.Contains(Guid.Parse(element[0].ToString())));
-                data.AddRange(rows.Where(x => ids.Contains((Guid)x[0])));
+                data.AddRange(rows);
 
                 source.WriteData(data);
             });
