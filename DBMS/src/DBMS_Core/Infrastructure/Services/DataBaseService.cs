@@ -13,7 +13,7 @@ using static DBMS_Core.Constants;
 
 namespace DBMS_Core.Infrastructure.Services
 {
-    public class DataBaseService: IDataBaseService
+    internal class DataBaseService: IDataBaseService
     {
         private IFileWorker _fileWorker;
         private DataBase DataBase {  get;  set; }
