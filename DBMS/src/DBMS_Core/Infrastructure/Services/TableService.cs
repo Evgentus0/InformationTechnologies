@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 
 namespace DBMS_Core.Infrastructure.Services
 {
-    public class TableService : ITableService
+    internal class TableService : ITableService
     {
         public Table Table { get;  private set; }
 

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\DBMS_Core\DBMS_Core.csproj" />
+    <ProjectReference Include="..\..\DBSM.Manager\DBMS.Manager.csproj" />
   </ItemGroup>
 
 </Project>

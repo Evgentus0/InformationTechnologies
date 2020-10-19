@@ -10,15 +10,16 @@ using System.Text;
 using System.Windows.Forms;
 using System.Linq;
 using DBMS_Core.Extentions;
+using DBSM.Manager.Interfaces;
 
 namespace DBMS.Clients.WinForm.Forms
 {
     public partial class TableSchemaForm : Form
     {
-        private ITableService _tableService;
+        private ITableManager _tableService;
         private Settings _settings;
 
-        public TableSchemaForm(ITableService tableService)
+        public TableSchemaForm(ITableManager tableService)
         {
             InitializeComponent();
             _settings = new Settings();
