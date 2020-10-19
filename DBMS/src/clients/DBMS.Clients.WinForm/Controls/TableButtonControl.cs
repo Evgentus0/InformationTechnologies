@@ -32,6 +32,7 @@ namespace DBMS.Clients.WinForm.Controls
             dataGrid = new DataGridView();
             dataGrid.CellBeginEdit += DataGrigTable_CellBeginEdit;
             dataGrid.Dock = DockStyle.Fill;
+            dataGrid.AllowUserToAddRows = false;
 
             Text = tableService.Table.Name;
 
@@ -263,6 +264,7 @@ namespace DBMS.Clients.WinForm.Controls
                         if (i > 0 && fields[i - 1].Type == SupportedTypes.Picture && row[i] != null)
                         {
                             var picture = (Picture)SupportedTypesFactory.GetTypeInstance(SupportedTypes.Picture, row[i].ToString());
+   
                             var image = Bitmap.FromFile(picture.Path);
                             var imageCell = new DataGridViewImageCell();
                             imageCell.Value = image;
@@ -372,6 +374,7 @@ namespace DBMS.Clients.WinForm.Controls
             }
 
             _tableService.UpdateRows(values);
+            MessageBox.Show(Constants.TableButtonControl.UpdatedSuccess);
         }
 
         private void DeleteSelectedRows()
