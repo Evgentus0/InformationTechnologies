@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Infrastructure.FileStore
 {
-    public class FileWorker : IFileWorker
+    internal class FileWorker : IFileWorker
     {
         public DataBase DataBase { get; set; }
         public FileWorker(DataBase dataBase)

@@ -17,13 +17,10 @@ namespace DBMS_Core.Models
         public List<ISource> Sources { get; set; }
         [JsonPropertyName("schema")]
         public TableSchema Schema { get; set; }
-        [JsonIgnore]
-        public List<List<object>> Items { get; set; }
 
         public Table()
         {
             Sources = new List<ISource>();
-            Items = new List<List<object>>();
             Schema = new TableSchema();
         }
     }
