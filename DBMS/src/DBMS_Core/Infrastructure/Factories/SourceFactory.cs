@@ -9,14 +9,14 @@ namespace DBMS_Core.Infrastructure.Factories
 {
     public static class SourceFactory
     {
-        public static ISource GetSourceObject(SupportedSources type, string rootPath, string name)
+        public static ISource GetSourceObject(SupportedSources type, string rootPath, string tableName)
         {
             var sourceType = Type.GetType(type.GetAssemblyDescription());
 
             var sourceObject = Activator.CreateInstance(sourceType);
 
             var source = (ISource)sourceObject;
-            source.Url = $"{rootPath}\\{name}";
+            source.Url = $"{rootPath}\\{tableName}";
 
             return source;
         }

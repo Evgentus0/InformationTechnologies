@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DBMS_Core
 {
-    static class Constants
+    public static class Constants
     {
         public const string DataBaseFileExtention = ".edbf";
         public const string TableFileExtention = ".etf";

@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\clients\internal\DBMS.WebApiClient\DBMS.WebApiClient.csproj" />
-    <ProjectReference Include="..\DBMS_Core\DBMS_Core.csproj" />
+    <ProjectReference Include="..\..\..\..\DBMS.SharedModels\DBMS.SharedModels.csproj" />
+    <ProjectReference Include="..\..\..\DBMS_Core\DBMS_Core.csproj" />
   </ItemGroup>
 
 </Project>

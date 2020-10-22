@@ -6,10 +6,10 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Infrastructure\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\DBMS.SharedModels\DBMS.SharedModels.csproj" />
     <ProjectReference Include="..\..\DBMS_Core\DBMS_Core.csproj" />
   </ItemGroup>
 

@@ -9,7 +9,7 @@ namespace DBMS_Core.Infrastructure.Factories
 {
     public class ValidatorsFactory
     {
-        public static IValidator GetValidator(SupportedTypes valueType, Enum operation, object value)
+        public static IValidator GetValidator(SupportedTypes valueType, int operation, object value)
         {
             if (valueType.IsValidatorAvailable())
             {
