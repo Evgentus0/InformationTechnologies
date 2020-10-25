@@ -1,5 +1,6 @@
 ﻿using DBMS.Clients.WinForm.Controls;
 using DBMS.Clients.WinForm.Forms;
+using DBMS.Clients.WinForm.Managers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,7 +14,7 @@ namespace DBMS.Clients.WinForm
 {
     public partial class Main : Form
     {
-        private DbFormManager _formManager;
+        private IDbFormManager _formManager;
 
         public Main()
         {
@@ -23,7 +24,7 @@ namespace DBMS.Clients.WinForm
             SharedControls.GroupBoxData = groupBoxGrid;
             SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
 
-            _formManager = new DbFormManager();
+            _formManager = new DbFormManagerRemote();
         }
 
         private void InitMenu()
@@ -50,13 +51,9 @@ namespace DBMS.Clients.WinForm
                 {
                     (Constants.MainForm.Open, new Action<object, EventArgs>((o, f) =>
                     {
-                        DialogResult result = openFileDialog.ShowDialog();
-                        if (result == DialogResult.OK) 
-                        {
-                           string file = openFileDialog.FileName;
 
-                            _formManager.OpenDb(file);
-                        }
+                         _formManager.OpenDb(openFileDialog);
+
                     })),
                     (Constants.MainForm.CreateNew, new Action<object, EventArgs>((o, f) =>
                     {

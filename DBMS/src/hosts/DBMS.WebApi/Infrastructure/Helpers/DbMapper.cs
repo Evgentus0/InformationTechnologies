@@ -6,6 +6,7 @@ using DBMS_Core.Models.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DBMS.WebApi.Infrastructure.Helpers
@@ -33,7 +34,7 @@ namespace DBMS.WebApi.Infrastructure.Helpers
                         {
                             Operation = x.Operation,
                             Value = x.Value,
-                            ValueType = Enum.Parse<SupportedTypes>(x.ValueType)
+                            ValueType = x.ValueType
                         }).ToList()
                     }).ToList()
                 }
@@ -42,7 +43,19 @@ namespace DBMS.WebApi.Infrastructure.Helpers
 
         public List<IValidator> GetValidators(List<Validator> validators)
         {
-            return validators.Select(x => ValidatorsFactory.GetValidator(x.ValueType, x.Operation, x.Value)).ToList();
+            return validators.Select(x => ValidatorsFactory.GetValidator(_typesDic[x.ValueType], x.Operation, 
+                JsonSerializer.Deserialize(((JsonElement)x.Value).GetRawText(), Type.GetType(x.ValueType)))).ToList();
         }
+
+        private Dictionary<string, SupportedTypes> _typesDic =>
+            new Dictionary<string, SupportedTypes>
+            {
+                [typeof(int).AssemblyQualifiedName] = SupportedTypes.Integer,
+                [typeof(double).AssemblyQualifiedName] = SupportedTypes.Real,
+                [typeof(char).AssemblyQualifiedName] = SupportedTypes.Char,
+                [typeof(string).AssemblyQualifiedName] = SupportedTypes.String,
+                [typeof(RealInterval).AssemblyQualifiedName] = SupportedTypes.RealInterval,
+                [typeof(Picture).AssemblyQualifiedName] = SupportedTypes.Picture,
+            };
     }
 }

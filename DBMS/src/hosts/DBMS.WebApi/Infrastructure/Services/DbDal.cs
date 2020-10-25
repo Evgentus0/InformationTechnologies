@@ -91,7 +91,9 @@ namespace DBMS.WebApi.Infrastructure.Services
             {
                 List<string> names = await _fileHelper.GetDbNames();
 
-                return (names, new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage });
+                var result = names.Select(x => x.Split('\\').Last().Split('.').First()).ToList();
+
+                return (result, new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage });
             }
             catch(Exception ex)
             {
@@ -99,9 +101,21 @@ namespace DBMS.WebApi.Infrastructure.Services
             }
         }
 
-        public Task<(Table table, RequestResult result)> GetTable(string dbName, string tableName)
+        public async Task<(Table table, RequestResult result)> GetTable(string dbName, string tableName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                IDataBaseService dataBase = await _fileHelper.GetDb(dbName);
+                var table = dataBase[tableName];
+
+                Table tablesDto = _mapper.GetDtoTables(new List<DBMS_Core.Models.Table> { table.Table }).First();
+
+                return (tablesDto, new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage });
+            }
+            catch (Exception ex)
+            {
+                return (null, new RequestResult { IsSuccess = false, Message = ex.Message });
+            }
         }
 
         public async Task<(List<Table> tables, RequestResult result)> GetTables(string dbName)

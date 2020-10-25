@@ -7,7 +7,7 @@ namespace DBMS.WebApi.Settings
 {
     public class Settings
     {
-        public string SuccessMessage { get; internal set; }
+        public string SuccessMessage { get; set; }
         public string RootPath { get; set; }
     }
 }

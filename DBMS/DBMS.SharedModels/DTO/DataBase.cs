@@ -9,5 +9,11 @@ namespace DBMS.SharedModels.DTO
         public string Name { get; set; }
         public DbSettings Settings { get; set; }
         public List<Table> Tables { get; set; }
+
+        public DataBase()
+        {
+            Settings = new DbSettings();
+            Tables = new List<Table>();
+        }
     }
 }

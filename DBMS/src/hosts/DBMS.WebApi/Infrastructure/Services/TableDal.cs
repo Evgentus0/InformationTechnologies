@@ -8,7 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using DBMS_Core.Extentions;
 
 namespace DBMS.WebApi.Infrastructure.Services
 {
@@ -105,8 +108,9 @@ namespace DBMS.WebApi.Infrastructure.Services
             {
                 var db = await _fileHelper.GetDb(dbName);
                 var table = db[tableName];
+                List<List<object>> mappedData = InsertDataToOriginObjects(data, table.Table.Schema);
 
-                table.InsertDataRange(data);
+                table.InsertDataRange(mappedData);
 
                 return new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage };
             }
@@ -114,6 +118,22 @@ namespace DBMS.WebApi.Infrastructure.Services
             {
                 return new RequestResult { IsSuccess = false, Message = ex.Message };
             }
+        }
+
+        private List<List<object>> InsertDataToOriginObjects(List<List<object>> data, DBMS_Core.Models.TableSchema schema)
+        {
+            var fields = schema.Fields;
+
+            data.ForEach(x =>
+            {
+                for(int i=0;i< fields.Count; i++)
+                {
+                    x[i] = JsonSerializer.Deserialize(((JsonElement)x[i]).GetRawText(),
+                        Type.GetType(fields[i].Type.GetAssemblyDescription()));
+                }
+            });
+
+            return data;
         }
 
         public async Task<(List<List<object>> data, RequestResult result)> Select(string tableName, string dbName, SelectRequest requestParameters)
@@ -174,7 +194,9 @@ namespace DBMS.WebApi.Infrastructure.Services
                 var db = await _fileHelper.GetDb(dbName);
                 var table = db[tableName];
 
-                table.UpdateRows(data);
+                List<List<object>> mappedData = UpdateDataJsonToOriginObjects(data, table.Table.Schema.Fields);
+
+                table.UpdateRows(mappedData);
 
                 return new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage };
             }
@@ -184,10 +206,35 @@ namespace DBMS.WebApi.Infrastructure.Services
             }
         }
 
+        private List<List<object>> UpdateDataJsonToOriginObjects(List<List<object>> data, List<DBMS_Core.Models.Field> fields)
+        {
+            data.ForEach(x =>
+            {
+                x[0] = Guid.Parse(((JsonElement)x[0]).ToString());
+                for (int i = 0; i < fields.Count; i++)
+                {
+                    x[i + 1] = JsonSerializer.Deserialize(((JsonElement)x[i + 1]).GetRawText(),
+                        Type.GetType(fields[i].Type.GetAssemblyDescription()));
+                }
+            });
+
+            return data;
+        }
+
         public async Task<RequestResult> UpdateSchema(string tableName, string dbName, Table table)
         {
             try
-            {               
+            {
+                var db = await _fileHelper.GetDb(dbName);
+                var tableService = db[tableName];
+                var tableCore = tableService.Table;
+                for(int i =0;i< tableCore.Schema.Fields.Count; i++)
+                {
+                    tableCore.Schema.Fields[i].Name = table.TableSchema.Fields[i].Name;
+                }
+
+                tableService.UpdateSchema();
+
                 return new RequestResult { IsSuccess = true, Message = _setting.SuccessMessage };
             }
             catch (Exception ex)

@@ -12,6 +12,8 @@ using System.Text.Json;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using DBMS.SharedModels.ResuestHelpers;
+using DBMS_Core.Sources;
+using System.Runtime.CompilerServices;
 
 namespace DBMS.WebApiClient
 {
@@ -37,7 +39,7 @@ namespace DBMS.WebApiClient
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
-            _client.PostAsync(url, null);
+            PostRequest(url, null);
         }
 
         public void DeleteTable(string dbName, string tableName)
@@ -48,7 +50,26 @@ namespace DBMS.WebApiClient
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
-            _client.DeleteAsync(url);
+            DeleteRequest(url);
+        }
+
+        public void CreateDb(string name, long fileSize, SupportedSources source)
+        {
+            var url = RequestBuilder.StartBuild(_settings.Host)
+                .AddUrl(_settings.Constants.DbController)
+                .Build();
+
+            var db = new Dto.DataBase
+            {
+                Name = name,
+                Settings = new Dto.DbSettings
+                {
+                    DefaultSource = source,
+                    FileSize = fileSize
+                }
+            };
+
+            PostRequest(url, db);
         }
 
         public Table GetTable(string dbName, string tableName)
@@ -59,12 +80,9 @@ namespace DBMS.WebApiClient
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
-            var response = _client.GetAsync(url).Result;
-            response.EnsureSuccessStatusCode();
+            var table = GetRequest<Dto.Table>(url);
 
-            var table = JsonSerializer.Deserialize<Dto.Table>(response.Content.ReadAsStringAsync().Result);
-
-            return _mapper.FromTableDtoToTable(table);
+            return _mapper.FromTableDtoToTable(new List<Dto.Table> { table }).First();
         }
 
         public IEnumerable<Table> GetTables(string dbName)
@@ -75,10 +93,7 @@ namespace DBMS.WebApiClient
                 .AddUrl(_settings.Endpoints.AllTables)
                 .Build();
 
-            var response = _client.GetAsync(url).Result;
-            response.EnsureSuccessStatusCode();
-
-            var tables = JsonSerializer.Deserialize<List<Dto.Table>>(response.Content.ReadAsStringAsync().Result);
+            var tables = GetRequest<List<Dto.Table>>(url);
 
             return _mapper.FromTableDtoToTable(tables);
         }
@@ -99,10 +114,7 @@ namespace DBMS.WebApiClient
                 Validators = _mapper.GetDtoValidators(validators)
             };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(field));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
+            PostRequest(url, field);
         }
 
         public void DeleteField(string dbName, string tableName, string name)
@@ -112,10 +124,10 @@ namespace DBMS.WebApiClient
                 .AddUrl(dbName)
                 .AddUrl(tableName)
                 .AddUrl(_settings.Endpoints.DeleteField)
+                .WithParams((_settings.Constants.FieldName, name))
                 .Build();
 
-            var response = _client.DeleteAsync(url).Result;
-            response.EnsureSuccessStatusCode();
+            DeleteRequest(url);
         }
 
         public void DeleteRows(string dbName, string tableName, Dictionary<string, List<IValidator>> conditions)
@@ -134,10 +146,7 @@ namespace DBMS.WebApiClient
                 conditionsDto.Add(item.Key, _mapper.GetDtoValidators(item.Value));
             }
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(conditionsDto));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
+            PostRequest(url, conditionsDto);
         }
 
         public void DeleteRows(string dbName, string tableName, List<Guid> ids)
@@ -151,10 +160,7 @@ namespace DBMS.WebApiClient
                 .Build();
 
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(ids));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
+            PostRequest(url, ids);
         }
 
         public void InsertData(string dbName, string tableName, List<List<object>> lists)
@@ -167,10 +173,7 @@ namespace DBMS.WebApiClient
                 .Build();
 
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(lists));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
+            PostRequest(url, lists);
         }
 
         public List<List<object>> Select(string dbName, string tableName)
@@ -189,12 +192,7 @@ namespace DBMS.WebApiClient
                 Top = 100
             };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(selectRequest));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
-
-            var data = JsonSerializer.Deserialize<List<List<object>>>(response.Content.ReadAsStringAsync().Result);
+            var data = PostRequest<List<List<object>>>(url, selectRequest);
 
             return data;
         }
@@ -215,12 +213,7 @@ namespace DBMS.WebApiClient
                 Top = top
             };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(selectRequest));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
-
-            var data = JsonSerializer.Deserialize<List<List<object>>>(response.Content.ReadAsStringAsync().Result);
+            var data = PostRequest<List<List<object>>>(url, selectRequest);
 
             return data;
         }
@@ -248,12 +241,7 @@ namespace DBMS.WebApiClient
                 Conditions = conditionsDto
             };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(selectRequest));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
-
-            var data = JsonSerializer.Deserialize<List<List<object>>>(response.Content.ReadAsStringAsync().Result);
+            var data = PostRequest<List<List<object>>>(url, selectRequest);
 
             return data;
         }
@@ -281,12 +269,7 @@ namespace DBMS.WebApiClient
                 Conditions = conditionsDto
             };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(selectRequest));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
-
-            var data = JsonSerializer.Deserialize<List<List<object>>>(response.Content.ReadAsStringAsync().Result);
+            var data = PostRequest<List<List<object>>>(url, selectRequest);
 
             return data;
         }
@@ -303,12 +286,7 @@ namespace DBMS.WebApiClient
 
             var list = tables.Select(x => x.Name);
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(list));
-
-            var response = _client.PostAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
-
-            var data = JsonSerializer.Deserialize<List<List<object>>>(response.Content.ReadAsStringAsync().Result);
+            var data = PostRequest<List<List<object>>>(url, list);
 
             return data;
         }
@@ -323,10 +301,7 @@ namespace DBMS.WebApiClient
                 .Build();
 
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(rows));
-
-            var response = _client.PutAsync(url, content).Result;
-            response.EnsureSuccessStatusCode();
+            PutRequest(url, rows);
         }
 
         public void UpdateSchema(string dbName, Table table)
@@ -338,10 +313,89 @@ namespace DBMS.WebApiClient
                 .AddUrl(_settings.Endpoints.UpdateSchema)
                 .Build();
 
+            var tableDto = new Dto.Table
+            {
+                Name = table.Name,
+                TableSchema = new Dto.TableSchema
+                {
+                    Fields = table.Schema.Fields.Select(x => new Dto.Field
+                    {
+                        Name = x.Name,
+                        Type = x.Type
+                    }).ToList()
+                }
+            };
 
-            HttpContent content = new StringContent(JsonSerializer.Serialize(table));
+            PostRequest(url, tableDto);
+        }
+
+        public List<string> GetDbsList()
+        {
+            var url = RequestBuilder.StartBuild(_settings.Host)
+                .AddUrl(_settings.Constants.DbController)
+                .AddUrl(_settings.Endpoints.GetAllDb)
+                .Build();
+
+            var dbsList = GetRequest<List<string>>(url);
+
+            return dbsList;
+        }
+
+        private T GetRequest<T>(string url)
+        {
+            var response = _client.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize<T>(response.Content.ReadAsStringAsync().Result);
+
+            return result;
+        }
+
+        private T PostRequest<T>(string url, object data)
+        {
+            HttpContent content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
 
             var response = _client.PostAsync(url, content).Result;
+            response.EnsureSuccessStatusCode();
+
+            var result = JsonSerializer.Deserialize<T>(response.Content.ReadAsStringAsync().Result);
+            return result;
+        }
+
+        private void PostRequest(string url, object data)
+        {
+            HttpContent content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+
+            var response = _client.PostAsync(url, content).Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+        private T PutRequest<T>(string url, object data, bool returnValue = false)
+        {
+            HttpContent content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+
+            var response = _client.PutAsync(url, content).Result;
+            response.EnsureSuccessStatusCode();
+
+            if (returnValue)
+            {
+                var result = JsonSerializer.Deserialize<T>(response.Content.ReadAsStringAsync().Result);
+                return result;
+            }
+            return default(T);
+        }
+
+        private void PutRequest(string url, object data)
+        {
+            HttpContent content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+
+            var response = _client.PutAsync(url, content).Result;
+            response.EnsureSuccessStatusCode();
+        }
+
+        private void DeleteRequest(string url)
+        {
+            var response = _client.DeleteAsync(url).Result;
             response.EnsureSuccessStatusCode();
         }
     }

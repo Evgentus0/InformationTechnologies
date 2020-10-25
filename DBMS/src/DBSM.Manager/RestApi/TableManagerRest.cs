@@ -42,6 +42,8 @@ namespace DBMS.Manager.RestApi
 
         public void AddNewField(string name, SupportedTypes type, List<IValidator> validators = null)
         {
+            validators = validators ?? new List<IValidator>();
+
             _isTableDirty = true;
             _client.AddField(_dbName, _tableName, name, type, validators);
         }
@@ -111,7 +113,11 @@ namespace DBMS.Manager.RestApi
         public void UpdateSchema()
         {
             _isTableDirty = true;
-            _client.UpdateSchema(_dbName, _table);
+            _client.UpdateSchema(_dbName, Table);
+        }
+        public override string ToString()
+        {
+            return Table.Name;
         }
     }
 }

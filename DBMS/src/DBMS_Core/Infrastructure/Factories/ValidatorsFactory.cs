@@ -22,7 +22,7 @@ namespace DBMS_Core.Infrastructure.Factories
                 try
                 {
                     var operationType = Type.GetType(validator.OperationType);
-                    enumOperation = (int)Convert.ChangeType(operation, operationType);
+                    enumOperation = (int)Enum.ToObject(operationType, operation);
                 }
                 catch(Exception ex)
                 {
