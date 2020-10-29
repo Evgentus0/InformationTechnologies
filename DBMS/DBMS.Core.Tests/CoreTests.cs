@@ -63,6 +63,12 @@ namespace DBMS.Core.Tests
             table3.InsertDataRange(data3);
         }
 
+        [TearDown]
+        public void DownTests()
+        {
+            dataBaseService.DeleteDb();
+        }
+
         [Test]
         public void UnionTest()
         {

@@ -12,6 +12,7 @@ namespace DBMS_Core.Interfaces
         void AddTable(string tableName);
         void AddTable(string tableName, TableSchema schema);
         void DeleteTable(string tableName);
+        void DeleteDb();
         IEnumerable<ITableService> GetTables();
     }
 }
