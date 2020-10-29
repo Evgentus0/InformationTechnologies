@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DBMS.SharedModels\DBMS.SharedModels.csproj" />
+    <ProjectReference Include="..\..\DBMS_Core\DBMS_Core.csproj" />
+  </ItemGroup>
+
+
+</Project>

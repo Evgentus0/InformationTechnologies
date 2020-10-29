@@ -10,7 +10,6 @@ namespace DBSM.Manager.Interfaces
         string Name { get; }
         ITableManager this[string key] { get; }
         void AddTable(string tableName);
-        void AddTable(string tableName, TableSchema schema);
         void DeleteTable(string tableName);
         IEnumerable<ITableManager> GetTables();
     }

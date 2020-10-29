@@ -59,7 +59,7 @@ namespace DBMS.Clients.WinForm.Forms
             {
                 IsSet = true;
 
-                Validator = ValidatorsFactory.GetValidator(_type, (Enum)comboBoxOperation.SelectedItem, _value);
+                Validator = ValidatorsFactory.GetValidator(_type, (int)comboBoxOperation.SelectedItem, _value);
 
                 Close();
             }

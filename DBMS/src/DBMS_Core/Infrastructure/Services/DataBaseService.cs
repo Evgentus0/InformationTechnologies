@@ -88,5 +88,20 @@ namespace DBMS_Core.Infrastructure.Services
                 yield return TableServiceFactory.GetTableService(table, _fileWorker);
             }
         }
+
+        public void DeleteDb()
+        {
+            var tables = DataBase.Tables.ToList();
+
+            foreach (var table in tables)
+            {
+                DeleteTable(table.Name);
+            }
+
+            var filePath = $"{DataBase.Settings.RootPath}\\{_dataBaseFile}";
+            File.Delete(filePath);
+
+            this.DataBase = null;
+        }
     }
 }

@@ -10,17 +10,24 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
-namespace DBMS.Clients.WinForm
+namespace DBMS.Clients.WinForm.Managers
 {
-    class DbFormManager
+    class DbFormManagerLocal: IDbFormManager
     {
-        public DbFormManager()
+        public DbFormManagerLocal()
         {        }
 
-        public void OpenDb(string path)
+        public void OpenDb(OpenFileDialog fileDialog)
         {
             try
             {
+                string path = "";
+                DialogResult result = fileDialog.ShowDialog();
+                if (result == DialogResult.OK)
+                {
+                    path = fileDialog.FileName;
+                }
+
                 IDbManager dataBaseService = DbManagerFactory.GetDbManagerLocal(path);
 
                 var dbPanel = new DataBasePanelControl(dataBaseService);

@@ -88,5 +88,9 @@ namespace DBSM.Manager.Local
         {
             _tableService.UpdateSchema();
         }
+        public override string ToString()
+        {
+            return Table.Name;
+        }
     }
 }

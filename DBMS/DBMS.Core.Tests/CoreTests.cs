@@ -1,4 +1,5 @@
-﻿using DBMS_Core.Infrastructure.Services;
+﻿using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Services;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
 using NUnit.Framework;
@@ -20,7 +21,7 @@ namespace DBMS.Core.Tests
             string name = "EntityServiceTest";
             long fileSize = 1000000;
             string path = @"D:\Education\4 course\InformationTechnologies\Labs\DBMS\tests";
-            dataBaseService = new DataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.Json);
+            dataBaseService = DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.Json);
 
             dataBaseService.AddTable("Table1");
             dataBaseService.AddTable("Table2");
@@ -60,6 +61,12 @@ namespace DBMS.Core.Tests
                  new List<object>{"Test3",  15, new RealInterval { From = 123, To=1234414} }
             };
             table3.InsertDataRange(data3);
+        }
+
+        [TearDown]
+        public void DownTests()
+        {
+            dataBaseService.DeleteDb();
         }
 
         [Test]

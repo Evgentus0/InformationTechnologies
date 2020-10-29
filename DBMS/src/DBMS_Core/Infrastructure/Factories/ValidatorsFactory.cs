@@ -9,7 +9,7 @@ namespace DBMS_Core.Infrastructure.Factories
 {
     public class ValidatorsFactory
     {
-        public static IValidator GetValidator(SupportedTypes valueType, Enum operation, object value)
+        public static IValidator GetValidator(SupportedTypes valueType, int operation, object value)
         {
             if (valueType.IsValidatorAvailable())
             {
@@ -22,7 +22,7 @@ namespace DBMS_Core.Infrastructure.Factories
                 try
                 {
                     var operationType = Type.GetType(validator.OperationType);
-                    enumOperation = (int)Convert.ChangeType(operation, operationType);
+                    enumOperation = (int)Enum.ToObject(operationType, operation);
                 }
                 catch(Exception ex)
                 {

@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\clients\internal\DBMS.WebApiClient\DBMS.WebApiClient.csproj" />
-    <ProjectReference Include="..\DBMS_Core\DBMS_Core.csproj" />
+    <ProjectReference Include="..\src\DBMS_Core\DBMS_Core.csproj" />
   </ItemGroup>
 
 </Project>
