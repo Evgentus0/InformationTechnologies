@@ -1,4 +1,5 @@
 ﻿using DBMS_Core.Interfaces;
+using DBMS_Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,21 @@ namespace DBMS_Core.Sources
         public string Url { get; set; }
         public string Type => typeof(JsonSource).AssemblyQualifiedName;
         public long SizeInBytes => new FileInfo(Url).Length;
+        public bool AllowMultipleSource { get; set; } = true;
 
+        public void SetUrl(DataBase db, Table table)
+        {
+            Url = $"{db.Settings.RootPath}\\{table.Name}{Constants.TableFileExtention}";
+        }
+        public void Delete()
+        {
+            File.Delete(Url);
+        }
+
+        public void Create()
+        {
+            using (File.Create(Url)) { }
+        }
         public async Task<List<List<object>>> GetDataAsync()
         {
             using (var data = File.OpenRead(Url))

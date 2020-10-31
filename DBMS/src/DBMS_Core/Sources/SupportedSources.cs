@@ -9,6 +9,8 @@ namespace DBMS_Core.Sources
     public enum SupportedSources
     {
         [AssemblyName(typeof(JsonSource))]
-        Json
+        Json,
+        [AssemblyName(typeof(SqlServerSource))]
+        SqlServer
     }
 }

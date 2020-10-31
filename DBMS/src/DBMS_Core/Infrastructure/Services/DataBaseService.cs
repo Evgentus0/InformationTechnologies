@@ -52,7 +52,14 @@ namespace DBMS_Core.Infrastructure.Services
 
         public DataBaseService(string path)
         {
-            _fileWorker = FileWorkerFactory.GetFileWorker(DataBase);
+            SupportedSources source;
+            if (path.Split(Constants.Separator).Length == 2)
+                source = SupportedSources.SqlServer;
+            else
+                source = SupportedSources.Json;
+
+
+            _fileWorker = FileWorkerFactory.GetFileWorker(new DataBase { Settings = new Settings { DefaultSource = source} });
             DataBase = _fileWorker.GetDataBaseFromFile(path);
 
             _fileWorker.DataBase = DataBase;

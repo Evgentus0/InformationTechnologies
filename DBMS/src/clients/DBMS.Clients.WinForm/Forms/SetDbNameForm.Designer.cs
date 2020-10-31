@@ -37,8 +37,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.comboBoxSourceType = new System.Windows.Forms.ComboBox();
             this.numericUpDownFIleSize = new System.Windows.Forms.NumericUpDown();
-            this.buttonPath = new System.Windows.Forms.Button();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.textBoxPath = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownFIleSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -139,22 +139,20 @@
             0,
             0});
             // 
-            // buttonPath
+            // textBoxPath
             // 
-            this.buttonPath.Location = new System.Drawing.Point(317, 41);
-            this.buttonPath.Name = "buttonPath";
-            this.buttonPath.Size = new System.Drawing.Size(234, 30);
-            this.buttonPath.TabIndex = 5;
-            this.buttonPath.Text = "Choose folder";
-            this.buttonPath.UseVisualStyleBackColor = true;
-            this.buttonPath.Click += new System.EventHandler(this.buttonPath_Click);
+            this.textBoxPath.Location = new System.Drawing.Point(317, 41);
+            this.textBoxPath.Name = "textBoxPath";
+            this.textBoxPath.Size = new System.Drawing.Size(234, 29);
+            this.textBoxPath.TabIndex = 5;
+            this.textBoxPath.Click += new System.EventHandler(this.textBoxPath_Click);
             // 
             // SetDbNameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(563, 256);
-            this.Controls.Add(this.buttonPath);
+            this.Controls.Add(this.textBoxPath);
             this.Controls.Add(this.numericUpDownFIleSize);
             this.Controls.Add(this.comboBoxSourceType);
             this.Controls.Add(this.label4);
@@ -185,7 +183,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox comboBoxSourceType;
         private System.Windows.Forms.NumericUpDown numericUpDownFIleSize;
-        private System.Windows.Forms.Button buttonPath;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.TextBox textBoxPath;
     }
 }
