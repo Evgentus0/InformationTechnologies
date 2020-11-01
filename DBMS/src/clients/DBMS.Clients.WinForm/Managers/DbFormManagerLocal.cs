@@ -1,5 +1,6 @@
 ﻿using DBMS.Clients.WinForm.Controls;
 using DBMS.Clients.WinForm.DTO;
+using DBMS.Clients.WinForm.Forms;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Infrastructure.Services;
 using DBMS_Core.Interfaces;
@@ -22,10 +23,11 @@ namespace DBMS.Clients.WinForm.Managers
             try
             {
                 string path = "";
-                DialogResult result = fileDialog.ShowDialog();
-                if (result == DialogResult.OK)
+                var form = new InputForm(Constants.DbPanelControl.EnterPathForDb);
+                form.ShowDialog();
+                if (form.IsSet)
                 {
-                    path = fileDialog.FileName;
+                    path = form.Value;
                 }
 
                 IDbManager dataBaseService = DbManagerFactory.GetDbManagerLocal(path);

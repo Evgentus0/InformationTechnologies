@@ -24,6 +24,7 @@ namespace DBMS.Clients.WinForm
             public const string AddNewTable = "Add new table";
             public const string NewTableName = "New table name";
             public const string UnionTables = "Union tables";
+            public const string EnterPathForDb = "Enter db path";
         }
 
         public static class TableButtonControl

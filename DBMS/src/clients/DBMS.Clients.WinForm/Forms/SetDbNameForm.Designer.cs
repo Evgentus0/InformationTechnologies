@@ -145,7 +145,6 @@
             this.textBoxPath.Name = "textBoxPath";
             this.textBoxPath.Size = new System.Drawing.Size(234, 29);
             this.textBoxPath.TabIndex = 5;
-            this.textBoxPath.Click += new System.EventHandler(this.textBoxPath_Click);
             // 
             // SetDbNameForm
             // 

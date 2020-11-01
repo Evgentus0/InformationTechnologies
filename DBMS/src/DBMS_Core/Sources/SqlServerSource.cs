@@ -15,7 +15,7 @@ namespace DBMS_Core.Sources
     class SqlServerSource : ISource
     {
         private string _url;
-        public string Url {
+        public virtual string Url {
             get => _url;
             set 
             {

@@ -51,22 +51,5 @@ namespace DBMS.Clients.WinForm.Forms
                 MessageBox.Show(Constants.EnterNewDb.EnterData);
             }
         }
-
-        private void textBoxPath_Click(object sender, EventArgs e)
-        {
-            SupportedSources source = (SupportedSources)comboBoxSourceType.SelectedValue;
-            if(source == SupportedSources.Json)
-            {
-                DialogResult result = folderBrowserDialog.ShowDialog();
-                if (result == DialogResult.OK)
-                {
-                    textBoxPath.Text = folderBrowserDialog.SelectedPath;
-                }
-                else
-                {
-                    MessageBox.Show("Incorrect path");
-                }
-            }
-        }
     }
 }
