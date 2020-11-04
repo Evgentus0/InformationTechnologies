@@ -8,12 +8,14 @@ namespace DBMS.Core.Tests.SourcesTests
 {
     class JsonSourceTests : CoreTests
     {
-        protected override IDataBaseService SetDbService()
+        protected override void SetDbService()
         {
-            string name = "EntityServiceTest";
+            string name = _settings.DbName;
             long fileSize = 1000000;
-            string path = @"D:\Education\4 course\InformationTechnologies\DataBases\testsStore";
-            return DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.Json);
+            string path = _settings.JsonRoot;
+            dataBaseService = DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, 
+                DBMS_Core.Sources.SupportedSources.Json);
+            SetData();
         }
     }
 }

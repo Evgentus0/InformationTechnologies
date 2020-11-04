@@ -1,9 +1,12 @@
 ﻿using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
+using Microsoft.Extensions.Configuration;
+
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 
@@ -12,15 +15,16 @@ namespace DBMS.Core.Tests
     [TestFixture]
     public abstract class CoreTests
     {
-        private IDataBaseService dataBaseService;
+        protected IDataBaseService dataBaseService;
+        protected Settings _settings;
         [SetUp]
         public void Initialize()
         {
-            dataBaseService = SetDbService();
-            SetData();
+            _settings = new Settings();
+            SetDbService();
         }
 
-        protected abstract IDataBaseService SetDbService();
+        protected abstract void SetDbService();
 
         protected void SetData()
         {
@@ -172,6 +176,41 @@ namespace DBMS.Core.Tests
             var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
 
             table.DeleteRows(new List<Guid> { guid });
+            var actual = table.Select();
+
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < expected.Count; i++)
+                {
+                    for (int j = 0; j < expected[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j + 1].ToString());
+                    }
+                }
+            });
+        }
+
+        [Test]
+        public void Insert()
+        {
+            var table = dataBaseService["Table2"];
+            var insertData = new List<List<object>>
+            {
+                new List<object>{"name7", 1123, 321321 },
+                new List<object>{"name8", -5132412, 232457}
+            };
+            var expectedData = new List<List<object>>()
+            {
+                 new List<object>{"name1", 10, 3 },
+                 new List<object>{"name3", -12, 2},
+                 new List<object>{"name2", 124, -10},
+                new List<object>{"name7", 1123, 321321 },
+                new List<object>{"name8", -5132412, 232457}
+            };
+            var json = JsonSerializer.Serialize(expectedData);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+            table.InsertDataRange(insertData);
             var actual = table.Select();
 
             Assert.Multiple(() =>

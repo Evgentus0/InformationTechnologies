@@ -17,5 +17,10 @@ namespace DBMS.SqlServerSource
         {
             return new MongoDbClient(localhost, db, table);
         }
+
+        public static IDbClient GetJsonClient(string path)
+        {
+            return new JsonDbClient(path);
+        }
     }
 }

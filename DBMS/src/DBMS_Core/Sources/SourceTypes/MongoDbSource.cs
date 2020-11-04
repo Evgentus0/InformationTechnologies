@@ -7,9 +7,13 @@ using System.Text;
 
 namespace DBMS_Core.Sources
 {
-    class MongoDbSource: SqlServerSource
+    class MongoDbSource : BaseSource
     {
         public override string Type => typeof(MongoDbSource).AssemblyQualifiedName;
+
+        public override long SizeInBytes => default;
+
+        public override bool AllowMultipleSource => false;
 
         protected override IDbClient DbClient
         {
@@ -27,6 +31,12 @@ namespace DBMS_Core.Sources
             {
                 _dbClient = value;
             }
+        }
+
+        public override void SetUrl(DataBase db, Table table)
+        {
+            Url = $"{db.Settings.RootPath}{Constants.Separator}{db.Name}{Constants.Separator}{table.Name}";
+            Create();
         }
     }
 }

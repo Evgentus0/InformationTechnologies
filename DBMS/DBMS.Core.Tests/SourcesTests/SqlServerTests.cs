@@ -8,12 +8,14 @@ namespace DBMS.Core.Tests.SourcesTests
 {
     class SqlServerTests: CoreTests
     {
-        protected override IDataBaseService SetDbService()
+        protected override void SetDbService()
         {
-            string name = "EntityServiceTest";
+            string name = _settings.DbName;
             long fileSize = 1000000;
-            string path = @"DESKTOP-2UQRN34\SQLEXPRESS";
-            return DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.SqlServer);
+            string path = _settings.SqlServer;
+            dataBaseService = DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, 
+                DBMS_Core.Sources.SupportedSources.SqlServer);
+            SetData();
         }
     }
 }

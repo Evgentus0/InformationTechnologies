@@ -1,6 +1,4 @@
-﻿using DBMS.SqlServerSource;
-using DBMS.SqlServerSource.Clients;
-using DBMS.SqlServerSource.Interfaces;
+﻿using DBMS.SqlServerSource.Interfaces;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using System;
@@ -12,33 +10,20 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    class SqlServerSource : ISource
+    abstract class BaseSource : ISource
     {
         public string Url { get; set; }
 
-        public virtual string Type => typeof(SqlServerSource).AssemblyQualifiedName;
+        public abstract string Type { get; }
 
-        public long SizeInBytes => default;
+        public abstract long SizeInBytes { get; }
 
-        public bool AllowMultipleSource => false;
+        public abstract bool AllowMultipleSource { get; }
+
         protected IDbClient _dbClient;
-        protected virtual IDbClient DbClient
-        {
-            get
-            {
-                if (_dbClient == null)
-                {
-                    var data = Url.Split(Constants.Separator);
-                    _dbClient = DbClientFactory.GetClient(data[0], data[1], data[2]);
-                }
-                    
-                return _dbClient;
-            }
-            set
-            {
-                _dbClient = value;
-            }
-        }
+        protected abstract IDbClient DbClient { get; set; }
+
+        public abstract void SetUrl(DataBase db, Table table);
 
         protected void Create()
         {
@@ -64,12 +49,6 @@ namespace DBMS_Core.Sources
 
             var data = listStringData.Select(x => JsonSerializer.Deserialize<List<object>>(x)).ToList();
             return data;
-        }
-
-        public void SetUrl(DataBase db, Table table)
-        {
-            Url = $"{db.Settings.RootPath}{Constants.Separator}{db.Name}{Constants.Separator}{table.Name}";
-            Create();
         }
 
         public void WriteData(List<List<object>> data)
