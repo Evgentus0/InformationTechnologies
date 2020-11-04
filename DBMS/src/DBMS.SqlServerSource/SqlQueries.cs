@@ -47,6 +47,12 @@ namespace DBMS.SqlServerSource
                                                 WHERE ('[' + name + ']' = @dbname 
                                                 OR name = @dbname)))
                                                 BEGIN
+	                                                DECLARE @kill varchar(8000); SET @kill = '';  
+	                                                SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), spid) + ';'  
+	                                                FROM master..sysprocesses  
+	                                                WHERE dbid = db_id(@dbname)
+	                                                EXEC(@kill); 
+
 	                                                DECLARE @sql NVARCHAR(max) =  'DROP DATABASE ' + @dbname;
 	                                                EXEC(@sql);
                                                 END";

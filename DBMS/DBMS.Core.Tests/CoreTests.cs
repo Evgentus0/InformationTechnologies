@@ -1,5 +1,4 @@
 ﻿using DBMS_Core.Infrastructure.Factories;
-using DBMS_Core.Infrastructure.Services;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
 using NUnit.Framework;
@@ -11,18 +10,20 @@ using System.Text.Json;
 namespace DBMS.Core.Tests
 {
     [TestFixture]
-    public class CoreTests
+    public abstract class CoreTests
     {
-        //private IStorage _storage;
         private IDataBaseService dataBaseService;
         [SetUp]
         public void Initialize()
         {
-            string name = "EntityServiceTest";
-            long fileSize = 1000000;
-            string path = @"D:\Education\4 course\InformationTechnologies\Labs\DBMS\tests";
-            dataBaseService = DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, DBMS_Core.Sources.SupportedSources.Json);
+            dataBaseService = SetDbService();
+            SetData();
+        }
 
+        protected abstract IDataBaseService SetDbService();
+
+        protected void SetData()
+        {
             dataBaseService.AddTable("Table1");
             dataBaseService.AddTable("Table2");
             dataBaseService.AddTable("Table3");
@@ -150,9 +151,37 @@ namespace DBMS.Core.Tests
 
             Assert.Multiple(() =>
             {
-                for(int i=0;i< actualRow.Count; i++)
+                for (int i = 0; i < actualRow.Count; i++)
                 {
                     Assert.AreEqual(expected[i].ToString(), actualRow[i].ToString());
+                }
+            });
+        }
+
+        [Test]
+        public void Delete()
+        {
+            var table = dataBaseService["Table1"];
+            var guid = Guid.Parse(table.Select().First().First().ToString());
+            var data = new List<List<object>>
+            {
+                new List<object>{"name3", -12, 2},
+                new List<object>{"name2", 124, -10}
+            };
+            var json = JsonSerializer.Serialize(data);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+            table.DeleteRows(new List<Guid> { guid });
+            var actual = table.Select();
+
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < expected.Count; i++)
+                {
+                    for (int j = 0; j < expected[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j + 1].ToString());
+                    }
                 }
             });
         }
