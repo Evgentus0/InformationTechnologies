@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DBMS_Core.Extentions;
+using DBMS_Core;
 
 namespace DBMS.WebApi.Infrastructure.Services
 {
@@ -129,7 +130,7 @@ namespace DBMS.WebApi.Infrastructure.Services
                 for(int i=0;i< fields.Count; i++)
                 {
                     x[i] = JsonSerializer.Deserialize(((JsonElement)x[i]).GetRawText(),
-                        Type.GetType(fields[i].Type.GetAssemblyDescription()));
+                        Type.GetType(fields[i].Type.GetAssemblyDescription(Constants.TypeDescription)));
                 }
             });
 
@@ -214,7 +215,7 @@ namespace DBMS.WebApi.Infrastructure.Services
                 for (int i = 0; i < fields.Count; i++)
                 {
                     x[i + 1] = JsonSerializer.Deserialize(((JsonElement)x[i + 1]).GetRawText(),
-                        Type.GetType(fields[i].Type.GetAssemblyDescription()));
+                        Type.GetType(fields[i].Type.GetAssemblyDescription(Constants.TypeDescription)));
                 }
             });
 

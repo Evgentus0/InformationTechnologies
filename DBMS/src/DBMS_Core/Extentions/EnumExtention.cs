@@ -25,7 +25,7 @@ namespace DBMS_Core.Extentions
             return value.ToString();
         }
 
-        public static string GetAssemblyDescription(this Enum value)
+        public static string GetAssemblyDescription(this Enum value, string key)
         {
             FieldInfo fi = value.GetType().GetField(value.ToString());
 
@@ -33,7 +33,7 @@ namespace DBMS_Core.Extentions
 
             if (!attributes.IsNullOrEmpty())
             {
-                return attributes.First().Type.AssemblyQualifiedName;
+                return attributes.FirstOrDefault(x => x.Key == key).Type.AssemblyQualifiedName;
             }
 
             return string.Empty;
@@ -69,7 +69,7 @@ namespace DBMS_Core.Extentions
 
         public static object GetDefaultValue(this SupportedTypes value)
         {
-            var type = Type.GetType(value.GetAssemblyDescription());
+            var type = Type.GetType(value.GetAssemblyDescription(Constants.SourceType));
             if (type.IsValueType)
             {
                 return Activator.CreateInstance(type);

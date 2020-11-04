@@ -14,40 +14,45 @@ namespace DBMS_Core.Sources
 {
     class SqlServerSource : ISource
     {
-        private string _url;
-        public virtual string Url {
-            get => _url;
-            set 
-            {
-                _url = value;
-                _dbClient = DbClientFactory.GetClient(_localhost, _db, _table);
-            }
-        }
+        public string Url { get; set; }
 
-        public string Type => typeof(SqlServerSource).AssemblyQualifiedName;
+        public virtual string Type => typeof(SqlServerSource).AssemblyQualifiedName;
 
         public long SizeInBytes => default;
 
         public bool AllowMultipleSource => false;
-        private IDbClient _dbClient;
-
-        private string _localhost => Url.Split(Constants.Separator)[0];
-        private string _db => Url.Split(Constants.Separator)[1];
-        private string _table => Url.Split(Constants.Separator)[2];
-
-        public void Create()
+        protected IDbClient _dbClient;
+        protected virtual IDbClient DbClient
         {
-            _dbClient.CreateTable();
+            get
+            {
+                if (_dbClient == null)
+                {
+                    var data = Url.Split(Constants.Separator);
+                    _dbClient = DbClientFactory.GetClient(data[0], data[1], data[2]);
+                }
+                    
+                return _dbClient;
+            }
+            set
+            {
+                _dbClient = value;
+            }
+        }
+
+        protected void Create()
+        {
+            DbClient.CreateTable();
         }
 
         public void Delete()
         {
-            _dbClient.DeleteTable();
+            DbClient.DeleteTable();
         }
 
         public List<List<object>> GetData()
         {
-            var listStringData = _dbClient.GetData();
+            var listStringData = DbClient.GetData();
 
             var data = listStringData.Select(x => JsonSerializer.Deserialize<List<object>>(x)).ToList();
             return data;
@@ -55,7 +60,7 @@ namespace DBMS_Core.Sources
 
         public async Task<List<List<object>>> GetDataAsync()
         {
-            var listStringData = await _dbClient.GetDataAsync();
+            var listStringData = await DbClient.GetDataAsync();
 
             var data = listStringData.Select(x => JsonSerializer.Deserialize<List<object>>(x)).ToList();
             return data;
@@ -64,6 +69,7 @@ namespace DBMS_Core.Sources
         public void SetUrl(DataBase db, Table table)
         {
             Url = $"{db.Settings.RootPath}{Constants.Separator}{db.Name}{Constants.Separator}{table.Name}";
+            Create();
         }
 
         public void WriteData(List<List<object>> data)
@@ -71,8 +77,8 @@ namespace DBMS_Core.Sources
             if (!(data == null || data.Count == 0))
             {
                 var newStringData = data.Select(x => JsonSerializer.Serialize(x)).ToList();
-                _dbClient.ClearTable();
-                _dbClient.InsertData(newStringData);
+                DbClient.ClearTable();
+                DbClient.InsertData(newStringData);
             }
         }
 
@@ -82,7 +88,7 @@ namespace DBMS_Core.Sources
             {
                 var newStringData = data.Select(x => JsonSerializer.Serialize(x)).ToList();
 
-                await _dbClient.InsertDataAsync(newStringData);
+                await DbClient.InsertDataAsync(newStringData);
             }
         }
     }

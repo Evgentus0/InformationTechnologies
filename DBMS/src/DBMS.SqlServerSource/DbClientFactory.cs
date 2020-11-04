@@ -12,5 +12,10 @@ namespace DBMS.SqlServerSource
         {
             return new DbClient(localhost, db, table);
         }
+
+        public static IDbClient GetMongoClient(string localhost, string db, string table = "")
+        {
+            return new MongoDbClient(localhost, db, table);
+        }
     }
 }

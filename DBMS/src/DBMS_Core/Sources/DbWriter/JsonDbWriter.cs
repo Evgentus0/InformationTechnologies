@@ -10,6 +10,11 @@ namespace DBMS_Core.Sources.DbWriter
 {
     class JsonDbWriter : IDbWriter
     {
+        public void DeleteDb(DataBase dataBase)
+        {
+            File.Delete($"{dataBase.Settings.RootPath}\\{dataBase.Name}{Constants.DataBaseFileExtention}");
+        }
+
         public DataBase GetDb(string filePath)
         {
             string data = File.ReadAllText(filePath);

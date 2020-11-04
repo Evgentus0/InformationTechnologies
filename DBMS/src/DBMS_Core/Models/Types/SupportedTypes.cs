@@ -9,21 +9,21 @@ namespace DBMS_Core.Models.Types
 {
     public enum SupportedTypes
     {
-        [AssemblyName(typeof(int))]
+        [AssemblyName(typeof(int), Constants.TypeDescription)]
         [ValidatorType(typeof(NumericValidator<int>))]
         Integer,
-        [AssemblyName(typeof(double))]
+        [AssemblyName(typeof(double), Constants.TypeDescription)]
         [ValidatorType(typeof(NumericValidator<double>))]
         Real,
-        [AssemblyName(typeof(char))]
+        [AssemblyName(typeof(char), Constants.TypeDescription)]
         Char,
-        [AssemblyName(typeof(string))]
+        [AssemblyName(typeof(string), Constants.TypeDescription)]
         [ValidatorType(typeof(StringValidator))]
         String,
-        [AssemblyName(typeof(RealInterval))]
+        [AssemblyName(typeof(RealInterval), Constants.TypeDescription)]
         [ValidatorType(typeof(RealIntervalValidator))]
         RealInterval,
-        [AssemblyName(typeof(Picture))]
+        [AssemblyName(typeof(Picture), Constants.TypeDescription)]
         Picture
     }
 }

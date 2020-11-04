@@ -38,5 +38,17 @@ namespace DBMS.SqlServerSource
                                         VALUES {1}";
 
         public const string DeleteTableIfExist = "DROP TABLE IF EXISTS dbo.{0}";
+
+        public const string DeleteDbIfExist = @"DECLARE @dbname nvarchar(128)
+                                                SET @dbname = N'{0}'
+
+                                                IF (EXISTS (SELECT name 
+                                                FROM master.dbo.sysdatabases 
+                                                WHERE ('[' + name + ']' = @dbname 
+                                                OR name = @dbname)))
+                                                BEGIN
+	                                                DECLARE @sql NVARCHAR(max) =  'DROP DATABASE ' + @dbname;
+	                                                EXEC(@sql);
+                                                END";
     }
 }

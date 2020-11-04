@@ -19,13 +19,14 @@ namespace DBMS_Core.Sources
         public void SetUrl(DataBase db, Table table)
         {
             Url = $"{db.Settings.RootPath}\\{table.Name}{Constants.TableFileExtention}";
+            Create();
         }
         public void Delete()
         {
             File.Delete(Url);
         }
 
-        public void Create()
+        private void Create()
         {
             using (File.Create(Url)) { }
         }

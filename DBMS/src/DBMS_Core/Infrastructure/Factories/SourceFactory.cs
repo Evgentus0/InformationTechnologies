@@ -12,7 +12,7 @@ namespace DBMS_Core.Infrastructure.Factories
     {
         public static ISource GetSourceObject(SupportedSources type, DataBase dataBase, Table table)
         {
-            var sourceType = Type.GetType(type.GetAssemblyDescription());
+            var sourceType = Type.GetType(type.GetAssemblyDescription(Constants.SourceType));
 
             var sourceObject = Activator.CreateInstance(sourceType);
 

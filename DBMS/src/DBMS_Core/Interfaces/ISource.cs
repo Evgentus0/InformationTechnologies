@@ -26,6 +26,5 @@ namespace DBMS_Core.Interfaces
 
         void WriteData(List<List<object>> data);
         Task WriteDataAsync(List<List<object>> data);
-        void Create();
     }
 }

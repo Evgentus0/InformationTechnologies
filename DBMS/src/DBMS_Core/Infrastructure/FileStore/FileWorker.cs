@@ -306,7 +306,6 @@ namespace DBMS_Core.Infrastructure.FileStore
                     DataBase, table);
 
             table.Sources.Add(source);
-            source.Create();
 
             UpdateDataBaseFile();
         }

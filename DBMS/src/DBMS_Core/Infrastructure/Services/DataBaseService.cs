@@ -2,6 +2,7 @@
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using DBMS_Core.Sources;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,17 +53,27 @@ namespace DBMS_Core.Infrastructure.Services
 
         public DataBaseService(string path)
         {
-            SupportedSources source;
-            if (path.Split(Constants.Separator).Length == 2)
-                source = SupportedSources.SqlServer;
-            else
-                source = SupportedSources.Json;
-
+            SupportedSources source = ResolvePath(path);
 
             _fileWorker = FileWorkerFactory.GetFileWorker(new DataBase { Settings = new Settings { DefaultSource = source} });
             DataBase = _fileWorker.GetDataBaseFromFile(path);
 
             _fileWorker.DataBase = DataBase;
+        }
+
+        private SupportedSources ResolvePath(string path)
+        {
+            SupportedSources source;
+            if (path.Split(Constants.Separator).Length == 2)
+            {
+                if (path.Split(Constants.Separator)[0].StartsWith("mongodb"))
+                    source = SupportedSources.MongoDb;
+                else
+                    source = SupportedSources.SqlServer;
+            }
+            else
+                source = SupportedSources.Json;
+            return source;
         }
 
         public void AddTable(string tableName)
@@ -105,8 +116,7 @@ namespace DBMS_Core.Infrastructure.Services
                 DeleteTable(table.Name);
             }
 
-            var filePath = $"{DataBase.Settings.RootPath}\\{_dataBaseFile}";
-            File.Delete(filePath);
+            DbWriterFactory.GetDbWriter(DataBase.Settings).DeleteDb(DataBase);
 
             this.DataBase = null;
         }

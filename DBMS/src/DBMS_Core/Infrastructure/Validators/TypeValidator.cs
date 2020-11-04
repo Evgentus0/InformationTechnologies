@@ -10,7 +10,7 @@ namespace DBMS_Core.Infrastructure.Validators
     {
         public static bool IsValidValue(SupportedTypes type, object value)
         {
-            var currentType = Type.GetType(type.GetAssemblyDescription());
+            var currentType = Type.GetType(type.GetAssemblyDescription(Constants.TypeDescription));
 
             try
             {

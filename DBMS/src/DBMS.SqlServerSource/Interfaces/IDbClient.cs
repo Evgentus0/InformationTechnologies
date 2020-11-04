@@ -15,6 +15,7 @@ namespace DBMS.SqlServerSource.Interfaces
         void InsertData(List<string> data);
         Task InsertDataAsync(List<string> data);
         void ClearTable();
+        void DeleteDatabase();
         string GetDb();
     }
 }

@@ -135,6 +135,19 @@ namespace DBMS.SqlServerSource.Clients
             return result;
         }
 
+        public void DeleteDatabase()
+        {
+            string connectToMasterDb = $"Server={_server};Integrated security=SSPI;database=master";
+
+            using (SqlConnection connection = new SqlConnection(connectToMasterDb))
+            {
+                connection.Open();
+                string expression = SqlQueries.DeleteDbIfExist.WithParameters(_db);
+                SqlCommand command = new SqlCommand(expression, connection);
+                command.ExecuteNonQuery();
+            }
+        }
+
         private string GetInsertValues(List<string> data)
         {
             StringBuilder sb = new StringBuilder();

@@ -8,6 +8,7 @@ namespace DBMS_Core.Interfaces
     interface IDbWriter
     {
         public void UpdateDb(DataBase dataBase);
+        public void DeleteDb(DataBase dataBase);
         DataBase GetDb(string filePath);
     }
 }
