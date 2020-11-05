@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using DBMS_Core.Converters;
+using DBMS_Core.Models;
 
 namespace DBMS_Core.Interfaces
 {
@@ -15,6 +16,10 @@ namespace DBMS_Core.Interfaces
         string Type { get; }
         [JsonIgnore]
         long SizeInBytes { get; }
+        bool AllowMultipleSource { get; }
+
+        void SetUrl(DataBase db, Table table);
+        void Delete();
 
         List<List<object>> GetData();
         Task<List<List<object>>> GetDataAsync();

@@ -10,5 +10,10 @@ namespace DBMS_Core
         public const string TableFileExtention = ".etf";
         public const string TryParseMethod = "TryParse";
         public const string TypeProperty = "type";
+        public const char Separator = '|';
+
+        public const string SourceType = "sourceType";
+        public const string TypeDescription = "typeDescription";
+        public const string DbWriterType = "dbWriterType";
     }
 }

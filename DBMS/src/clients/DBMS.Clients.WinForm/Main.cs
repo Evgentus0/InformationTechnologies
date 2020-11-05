@@ -24,7 +24,7 @@ namespace DBMS.Clients.WinForm
             SharedControls.GroupBoxData = groupBoxGrid;
             SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
 
-            _formManager = new DbFormManagerRemote();
+            _formManager = new DbFormManagerLocal();
         }
 
         private void InitMenu()
