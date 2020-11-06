@@ -33,7 +33,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
                 foreach(var item in _setting.RootPath)
                 {
                     var dbNames = GetDbNamesBySource(item.Key);
-                    if (dbNames.Contains(dbName) || dbNames.Contains(Constants.DbNamePrefix + dbName))
+                    if (dbNames.Contains(dbName))
                     {
                         return DataBaseServiceFactory.GetDataBaseService(RootFormat(item.Key, dbName));
                     }
@@ -64,7 +64,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
                 var res = new List<string>();
                 foreach(var key in _setting.RootPath.Keys)
                 {
-                    res.Union(GetDbNamesBySource(key));
+                    res = res.Union(GetDbNamesBySource(key)).ToList();
                 }
                 return res;
             });
