@@ -1,15 +1,13 @@
 ﻿using DBMS.SharedModels.DTO;
+using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS.SharedModels.ResuestHelpers;
-using DBMS.WebApi.Infrastructure.Interfaces;
 using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DBMS.WebApi.Settings;
-using DBMS.WebApi.Infrastructure.Helpers;
 
-namespace DBMS.WebApi.Infrastructure.Services
+namespace DBMS.SharedModels.Infrastructure.Services
 {
     public class DbDal : IDbDal
     {
@@ -17,11 +15,11 @@ namespace DBMS.WebApi.Infrastructure.Services
         private Settings.Settings _setting;
         private IDbMapper _mapper;
 
-        public DbDal(IFileHelper file, Settings.Settings setting)
+        public DbDal(IFileHelper file, IDbMapper dbMapper, Settings.Settings setting)
         {
             _fileHelper = file;
             _setting = setting;
-            _mapper = new DbMapper();
+            _mapper = dbMapper;
         }
 
         public async Task<RequestResult> AddTable(string dbName, string tableName)

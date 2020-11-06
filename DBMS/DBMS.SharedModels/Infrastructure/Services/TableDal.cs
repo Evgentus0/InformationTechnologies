@@ -1,7 +1,5 @@
 ﻿using DBMS.SharedModels.DTO;
 using DBMS.SharedModels.ResuestHelpers;
-using DBMS.WebApi.Infrastructure.Interfaces;
-using DBMS.WebApi.Settings;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using System;
@@ -13,8 +11,9 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using DBMS_Core.Extentions;
 using DBMS_Core;
+using DBMS.SharedModels.Infrastructure.Interfaces;
 
-namespace DBMS.WebApi.Infrastructure.Services
+namespace DBMS.SharedModels.Infrastructure.Services
 {
     public class TableDal : ITableDal
     {

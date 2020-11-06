@@ -21,7 +21,7 @@ namespace DBMS_Core.Infrastructure.FileStore
         public FileWorker(DataBase dataBase)
         {
             DataBase = dataBase;
-            _dbWriter = DbWriterFactory.GetDbWriter(dataBase.Settings);
+            _dbWriter = DbWriterFactory.GetDbWriter(dataBase.Settings.DefaultSource);
         }
 
         public DataBase GetDataBaseFromFile(string filePath)

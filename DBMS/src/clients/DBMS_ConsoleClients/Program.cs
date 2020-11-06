@@ -21,6 +21,8 @@ namespace DBMS_ConsoleClients
             MongoDb();
         }
 
+
+
         private static void Rest()
         {
             string name = "FirstDB";

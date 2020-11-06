@@ -1,23 +1,24 @@
 ﻿using DBMS_Core.Extentions;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
+using DBMS_Core.Sources;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace DBMS_Core.Infrastructure.Factories
 {
-    class DbWriterFactory
+    public class DbWriterFactory
     {
-        static public IDbWriter GetDbWriter(Settings settings)
+        static public IDbWriter GetDbWriter(SupportedSources source)
         {
-            if (Cache.ContainsKey(settings.DefaultSource.GetAssemblyDescription(Constants.DbWriterType)))
-                return Cache[settings.DefaultSource.GetAssemblyDescription(Constants.DbWriterType)];
+            if (Cache.ContainsKey(source.GetAssemblyDescription(Constants.DbWriterType)))
+                return Cache[source.GetAssemblyDescription(Constants.DbWriterType)];
 
-            var dbWriterType = Type.GetType(settings.DefaultSource.GetAssemblyDescription(Constants.DbWriterType));
+            var dbWriterType = Type.GetType(source.GetAssemblyDescription(Constants.DbWriterType));
             var dbWriterObject = Activator.CreateInstance(dbWriterType);
             var dbWriter = (IDbWriter)dbWriterObject;
-            Cache.Add(settings.DefaultSource.GetAssemblyDescription(Constants.DbWriterType), dbWriter);
+            Cache.Add(source.GetAssemblyDescription(Constants.DbWriterType), dbWriter);
 
             return dbWriter;
         }

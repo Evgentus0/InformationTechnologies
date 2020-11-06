@@ -3,6 +3,7 @@ using DBMS_Core.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 
@@ -21,6 +22,11 @@ namespace DBMS_Core.Sources.DbWriter
 
             var dataBase = JsonSerializer.Deserialize<DataBase>(data);
             return dataBase;
+        }
+
+        public List<string> GetDbsNames(string rootPath)
+        {
+            return Directory.GetFiles(rootPath, $"*{Constants.DataBaseFileExtention}").ToList();
         }
 
         public void UpdateDb(DataBase dataBase)

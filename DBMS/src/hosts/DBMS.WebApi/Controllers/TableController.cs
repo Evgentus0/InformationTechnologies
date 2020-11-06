@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DBMS.SharedModels.DTO;
+using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS.SharedModels.ResuestHelpers;
-using DBMS.WebApi.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

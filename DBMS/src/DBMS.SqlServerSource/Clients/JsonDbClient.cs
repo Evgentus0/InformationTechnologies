@@ -91,5 +91,10 @@ namespace DBMS.SqlServerSource.Clients
         {
             throw new NotImplementedException();
         }
+
+        public List<string> GetDbsNames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

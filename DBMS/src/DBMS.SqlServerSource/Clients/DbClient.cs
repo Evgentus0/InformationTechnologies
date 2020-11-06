@@ -134,7 +134,6 @@ namespace DBMS.SqlServerSource.Clients
             }
             return result;
         }
-
         public void DeleteDatabase()
         {
             string connectToMasterDb = $"Server={_server};Integrated security=SSPI;database=master";
@@ -146,6 +145,28 @@ namespace DBMS.SqlServerSource.Clients
                 SqlCommand command = new SqlCommand(expression, connection);
                 command.ExecuteNonQuery();
             }
+        }
+        public List<string> GetDbsNames()
+        {
+            string connectToMasterDb = $"Server={_server};Integrated security=SSPI;database=master";
+            var result = new List<string>();
+
+            using (SqlConnection connection = new SqlConnection(connectToMasterDb))
+            {
+                connection.Open();
+                string expression = SqlQueries.SelectAllDbsNames;
+                SqlCommand command = new SqlCommand(expression, connection);
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        result.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return result;
         }
 
         private string GetInsertValues(List<string> data)

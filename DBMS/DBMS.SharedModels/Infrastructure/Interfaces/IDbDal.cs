@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DBMS.WebApi.Infrastructure.Interfaces
+namespace DBMS.SharedModels.Infrastructure.Interfaces
 {
     public interface IDbDal
     {

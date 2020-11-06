@@ -1,5 +1,5 @@
 ﻿using DBMS.SharedModels.DTO;
-using DBMS.WebApi.Infrastructure.Interfaces;
+using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace DBMS.WebApi.Infrastructure.Helpers
+namespace DBMS.SharedModels.Infrastructure.Helpers
 {
     public class DbMapper : IDbMapper
     {
@@ -19,22 +19,22 @@ namespace DBMS.WebApi.Infrastructure.Helpers
             return tables.Select(x => new Table
             {
                 Name = x.Name,
-                Sources = x.Sources.Select(x => new Source
+                Sources = x.Sources.Select(s => new Source
                 {
-                    Type = x.Type,
-                    Url = x.Url
+                    Type = s.Type,
+                    Url = s.Url
                 }).ToList(),
                 TableSchema = new TableSchema
                 {
-                    Fields = x.Schema.Fields.Select(x => new Field
+                    Fields = x.Schema.Fields.Select(f => new Field
                     {
-                        Name = x.Name,
-                        Type = x.Type,
-                        Validators = x.Validators.Select(x => new Validator
+                        Name = f.Name,
+                        Type = f.Type,
+                        Validators = f.Validators.Select(v => new Validator
                         {
-                            Operation = x.Operation,
-                            Value = x.Value,
-                            ValueType = x.ValueType
+                            Operation = v.Operation,
+                            Value = v.Value,
+                            ValueType = v.ValueType
                         }).ToList()
                     }).ToList()
                 }
