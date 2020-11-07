@@ -14,12 +14,12 @@ namespace DBMS.WebApiClient.Helpers
 {
     class Mapper
     {
-        internal IEnumerable<DBMS_Core.Models.Table> FromTableDtoToTable(List<SharedModels.DTO.Table> tables)
+        internal IEnumerable<Table> FromTableDtoToTable(List<Dto.Table> tables)
         {
-            return tables.Select(t => new DBMS_Core.Models.Table
+            return tables.Select(t => new Table
             {
                 Name = t.Name,
-                Schema = new DBMS_Core.Models.TableSchema
+                Schema = new TableSchema
                 {
                     Fields = t.TableSchema?.Fields?.Select(f => new Field
                     {

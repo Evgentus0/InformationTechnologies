@@ -4,15 +4,15 @@ option csharp_namespace = "DBMS.GrpcServer";
 
 package dbmsCore;
 
-service DBService {
+service GrpcDBService {
   rpc CreateDatabase (CreateDbRequest) returns (BaseReply);
   rpc CreateTable (TableRequest) returns (BaseReply);
   rpc DeleteTable (TableRequest) returns (BaseReply);
   rpc GetTableList (GetTableListRequest) returns (GetTableListReply);
+  rpc GetTable (GetEntityRequest) returns (GetEntityReply);
 }
 
-service EntityService {
-	rpc GetTable (GetEntityRequest) returns (GetEntityReply);
+service GrpcTableService {
 	rpc AddColumn (AddColumnRequest) returns (BaseReply);
     rpc DropColumn (DropColumnRequst) returns (BaseReply);
 	rpc Insert (InsertRequest) returns (BaseReply);
@@ -22,24 +22,6 @@ service EntityService {
 	rpc Union (UnionRequest) returns (SelectReply);
 }
 
-enum ComparsonType
-{
-   COMPARSON_TYPE_EQUAL = 0;
-   COMPARSON_TYPE_NOT_EQUAL = 1;
-   COMPARSON_TYPE_GREATER = 2;
-   COMPARSON_TYPE_GREATER_OR_EQUAL = 3;
-   COMPARSON_TYPE_LESS = 4;
-   COMPARSON_TYPE_LESS_OR_EQUAL = 5;
-   COMPARSON_TYPE_STARTS_WITH = 6;
-   COMPARSON_TYPE_NOT_STARTS_WITH = 7;
-   COMPARSON_TYPE_CONTAINS = 8;
-   COMPARSON_TYPE_NOT_CONTAINS = 9;
-   COMPARSON_TYPE_IS_NULL = 10;
-   COMPARSON_TYPE_IS_NOT_NULL = 11;
-   COMPARSON_TYPE_ENDS_WITH = 12;
-   COMPARSON_TYPE_NOT_ENDS_WITH = 13;
-}
-
 message GetEntityRequest {
 	string dbName = 1;
 	string tableName = 2;
@@ -47,27 +29,28 @@ message GetEntityRequest {
 
 message Column {
 	string name = 1;
-	string dataValueTypeId = 2;
+	int32 dataValueType = 2;
 }
 
 message GetEntityReply {
 	int32 code = 1;
 	string message = 2;
 	string stackTrace = 3;
-	repeated Column columns = 4;
+	string name = 4;
+	repeated Column columns = 5;
 }
 
 message Validator {
 	string value = 1;
-	ComparsonType comparsonType = 2;
-	string dataValueTypeId = 3;
+	int32 operation = 2;
+	string dataValueType = 3;
 }
 
 message AddColumnRequest {
 	string dbName = 1;
 	string tableName = 2;
 	string columnName = 3;
-	string dataValueTypeId = 4;
+	int32 dataValueType = 4;
 	repeated Validator validators = 5;
 }
 
@@ -108,7 +91,9 @@ message UpdateRequest {
 message SelectRequest {
 	string dbName = 1;
 	string tableName = 2;
-	repeated ConditionsFieldEntry conditions = 3;
+	int32 top = 3;
+	int32 offset = 4;
+	repeated ConditionsFieldEntry conditions = 5;
 }
 
 message UnionRequest {
@@ -135,6 +120,7 @@ message CreateDbRequest {
 	string name = 1;
 	string rootPath = 2;
 	int64 fileSize = 3;
+	int32 sourceType = 4;
 }
 
 message TableRequest {
