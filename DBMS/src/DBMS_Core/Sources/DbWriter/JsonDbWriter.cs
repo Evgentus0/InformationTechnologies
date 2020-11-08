@@ -26,7 +26,16 @@ namespace DBMS_Core.Sources.DbWriter
 
         public List<string> GetDbsNames(string rootPath)
         {
-            return Directory.GetFiles(rootPath, $"*{Constants.DataBaseFileExtention}").ToList();
+            var rootList = Directory.GetFiles(rootPath, $"*{Constants.DataBaseFileExtention}").ToList();
+            var result = rootList.Select(x =>
+            {
+                var nameWithExtention = x.Split('\\').Last();
+                var name = nameWithExtention.Split('.').First();
+
+                return name;
+            });
+
+            return result.ToList();
         }
 
         public void UpdateDb(DataBase dataBase)

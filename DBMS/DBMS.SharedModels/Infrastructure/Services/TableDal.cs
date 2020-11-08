@@ -143,8 +143,9 @@ namespace DBMS.SharedModels.Infrastructure.Services
                 var db = await _fileHelper.GetDb(dbName);
                 var table = db[tableName];
                 var data = new List<List<object>>();
+                requestParameters.Top = requestParameters.Top == 0 ? 100 : requestParameters.Top;
 
-                if(requestParameters.Conditions != null)
+                if (requestParameters.Conditions != null)
                 {
                     var dbConditions = new Dictionary<string, List<IValidator>>();
 
@@ -153,7 +154,7 @@ namespace DBMS.SharedModels.Infrastructure.Services
                         dbConditions.Add(item.Key, _dbMapper.GetValidators(item.Value));
                     }
 
-                    data = table.Select(requestParameters.Top, requestParameters.Offset, dbConditions);
+                    data = table.Select(requestParameters.Top , requestParameters.Offset, dbConditions);
                 }
                 else
                 {

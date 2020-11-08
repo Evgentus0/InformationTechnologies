@@ -22,6 +22,19 @@
       <li class="nav-item">
         <span class="nav-link" >{{tableName}}</span>
       </li>
+      <li class="nav-item dropdown" [style.display]="dataSet ? 'block' : 'none'">
+        <a class="nav-link dropdown-toggle"  id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Operations
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <span>
+              <span class="dropdown-item" (click)="union(tableNameUnionInput.value)">Union</span>
+              <mat-form-field style="width: 80%; margin-left: 10%;">
+                <input placeholder="Table name" matInput #tableNameUnionInput>
+              </mat-form-field>
+            </span>
+        </div>
+      </li>
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="db name" aria-label="Search" #dbNameInput>
@@ -31,7 +44,7 @@
 </nav>
 
 <div>
-  <div>
-    <app-mat-table></app-mat-table>
+  <div >
+    <app-mat-table [style.display]="dataSet ? 'block' : 'none'"></app-mat-table>
   </div>
 </div>

@@ -23,6 +23,7 @@ export class AppComponent implements OnInit{
   tables:string[];
   tableName:string;
   dbName:string;
+  dataSet:boolean;
 
   @ViewChild(MatTableComponent) tableComponent:MatTableComponent;
 
@@ -30,22 +31,26 @@ export class AppComponent implements OnInit{
     this.tables = [];
     this.tableName="";
     this.dbName="";
+    this.dataSet = false;
   }
 
   selectTable(table:string){
     this.tableName = table;
     this._operationService.select(this.dbName,table).subscribe((data: EntityCollection)=>{
+      this.tableComponent.dbName = this.dbName;
+      this.tableComponent.tableName = this.tableName;
       this.tableComponent.tableCols = data.columnNames;
       this.tableComponent.tableData = data.data;
+      this.tableComponent.isReadOnly = false;
+      this.dataSet = true;
       this.tableComponent.ngOnInit();
     })
     
   }
 
   connectToDb(value){
-    this.dbName = value;
     var tablesRequest = new GetTableListRequest();
-    tablesRequest.setDbname(this.dbName);
+    tablesRequest.setDbname(value);
     grpc.unary(GrpcDBService.GetTableList, {
       request: tablesRequest,
       host: environment.host, 
@@ -54,21 +59,31 @@ export class AppComponent implements OnInit{
         if (status === grpc.Code.OK && message) {
           var result = message.toObject() as GetTableListReply.AsObject;
           this.tables = result.tablesList;
-          this.openSnackBar(true, "You have been successfully connected to database!");
+          this.dbName = value;
+          this.openSnackBar("You have been successfully connected to database!");
         } 
       }
     });
     this.tableComponent.clearGrid();
   }
 
-  openSnackBar(success: boolean, message: string) {
+  openSnackBar(message: string) {
     let action = "Ok";
-    if(success){
-      message = message;
-      action = "Great"
-    }
+    message = message;
+
     this._snackBar.open(message, action, {
       duration: 10000,
     });
+  }
+
+  union(secondTableName:string){
+    this._operationService.union(this.dbName, this.tableName, secondTableName).subscribe((data) => {
+      this.tableComponent.tableCols = data.columnNames;
+      this.tableComponent.tableData = data.data;
+      this.tableComponent.isReadOnly = true;
+      this.dataSet = true;
+      this.tableComponent.ngOnInit();
+    },
+    error => this.openSnackBar(error))
   }
 }

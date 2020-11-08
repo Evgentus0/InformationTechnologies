@@ -1,0 +1,17 @@
+<h1 mat-dialog-title>Row Action: <strong>{{action}}</strong></h1>
+<div mat-dialog-content>
+  <div *ngIf="action != 'Delete'; else elseTemplate">
+    <div *ngFor="let col of columns">
+      <mat-form-field style="width: 100%;">
+        <input placeholder="{{col}}" matInput [(ngModel)]="local_data[col]">
+      </mat-form-field>
+    </div>
+  </div>
+  <ng-template #elseTemplate>
+    Sure to delete?
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">{{action}}</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>

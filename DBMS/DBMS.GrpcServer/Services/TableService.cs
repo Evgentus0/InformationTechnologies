@@ -117,7 +117,20 @@ namespace DBMS.GrpcServer.Services
             {
                 var rows = request.Rows
                     .Select(x => new List<object>(x.Items
-                    .Select(i => JsonSerializer.Deserialize<object>(i)))).ToList();
+                    .Select(i =>
+                    {
+                        var res = new object();
+                        try
+                        {
+                            res = JsonSerializer.Deserialize<object>(i);
+                        }
+                        catch
+                        {
+                            res = JsonSerializer.Deserialize<object>($"\"{i}\"");
+                        }
+
+                        return res;
+                    }))).ToList();
 
                 await _tableDal.InsertData(request.TableName, request.DbName, rows);
 
@@ -184,7 +197,20 @@ namespace DBMS.GrpcServer.Services
             {
                 var rows = request.Rows
                     .Select(x => new List<object>(x.Items
-                    .Select(i => JsonSerializer.Deserialize<object>(i)))).ToList();
+                    .Select(i =>
+                    {
+                        var res = new object();
+                        try
+                        {
+                            res = JsonSerializer.Deserialize<object>(i);
+                        }
+                        catch
+                        {
+                            res = JsonSerializer.Deserialize<object>($"\"{i}\"");
+                        }
+
+                        return res;
+                    }))).ToList();
 
                 await _tableDal.UpdateData(request.TableName, request.DbName, rows);
 
