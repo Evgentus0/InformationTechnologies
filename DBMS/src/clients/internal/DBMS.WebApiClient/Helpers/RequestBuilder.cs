@@ -17,10 +17,13 @@ namespace DBMS.WebApiClient.Helpers
             return new RequestBuilder(new StringBuilder(prefix));
         }
 
-        public RequestBuilder AddUrl(string url)
+        public RequestBuilder AddUrl(params string[] urls)
         {
-            _builder.Append("/");
-            _builder.Append(url);
+            foreach(var url in urls)
+            {
+                _builder.Append("/");
+                _builder.Append(url);
+            }
 
             return this;
         }
