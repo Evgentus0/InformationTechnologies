@@ -9,17 +9,22 @@ using System.Text;
 using System.Windows.Forms;
 using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 
 namespace DBMS.Clients.WinForm.Forms
 {
     public partial class AddValidatorForm : Form
     {
+        private IValidatorsFactory _validatorsFactory;
+
         private SupportedTypes _type;
         public IValidator Validator { get; set; }
         public bool IsSet { get; set; }
         private object _value;
-        public AddValidatorForm(SupportedTypes type)
+        public AddValidatorForm(SupportedTypes type, IValidatorsFactory validatorsFactory)
         {
+            _validatorsFactory = validatorsFactory;
+
             InitializeComponent();
 
             _type = type;
@@ -59,7 +64,7 @@ namespace DBMS.Clients.WinForm.Forms
             {
                 IsSet = true;
 
-                Validator = ValidatorsFactory.GetValidator(_type, (int)comboBoxOperation.SelectedItem, _value);
+                Validator = _validatorsFactory.GetValidator(_type, (int)comboBoxOperation.SelectedItem, _value);
 
                 Close();
             }

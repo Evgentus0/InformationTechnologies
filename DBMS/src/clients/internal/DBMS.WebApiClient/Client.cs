@@ -19,18 +19,18 @@ using DBMS.SharedModels.Infrastructure.Helpers;
 
 namespace DBMS.WebApiClient
 {
-    public class Client
+    public class Client: IClient
     {
         private IDbMapper _mapper;
 
         private Settings.Settings _settings;
         private HttpClient _client;
 
-        public Client()
+        public Client(IDbMapper dbMapper, HttpClient httpClient)
         {
             _settings = new Settings.Settings();
-            _client = new HttpClient();
-            _mapper = new DbMapper();
+            _client = httpClient;
+            _mapper = dbMapper;
         }
 
         public void AddTable(string dbName, string tableName)

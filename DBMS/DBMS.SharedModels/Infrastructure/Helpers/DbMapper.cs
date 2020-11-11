@@ -9,11 +9,18 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DBMS_Core.Models;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 
 namespace DBMS.SharedModels.Infrastructure.Helpers
 {
     public class DbMapper : IDbMapper
     {
+        private IValidatorsFactory _validatorsFactory;
+        public DbMapper(IValidatorsFactory validatorsFactory)
+        {
+            _validatorsFactory = validatorsFactory;
+        }
+
         public List<Dto.Table> GetDtoTables(List<DBMS_Core.Models.Table> tables)
         {
 
@@ -44,7 +51,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
 
         public List<IValidator> GetValidators(List<Dto.Validator> validators)
         {
-            return validators.Select(x => ValidatorsFactory.GetValidator(_typesDic[x.ValueType], x.Operation, 
+            return validators.Select(x => _validatorsFactory.GetValidator(_typesDic[x.ValueType], x.Operation, 
                 JsonSerializer.Deserialize(((JsonElement)x.Value).GetRawText(), Type.GetType(x.ValueType)))).ToList();
         }
 
@@ -69,7 +76,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
                     {
                         Name = f.Name,
                         Type = f.Type,
-                        Validators = f.Validators?.Select(x => ValidatorsFactory
+                        Validators = f.Validators?.Select(x => _validatorsFactory
                         .GetValidator(_typesDic[x.ValueType], x.Operation,
                         JsonSerializer.Deserialize(((JsonElement)x.Value).GetRawText(), Type.GetType(x.ValueType)))).ToList()
                     }).ToList()

@@ -1,4 +1,5 @@
-﻿using DBMS_Core.Interfaces;
+﻿using DBMS.SqlServerSource.Interfaces;
+using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,13 @@ namespace DBMS_Core.Converters
 {
     public class SourceListConverter : JsonConverter<List<ISource>>
     {
+        IDbClientFactory _dbClientFactory;
+
+        public SourceListConverter(IDbClientFactory dbClientFactory)
+        {
+            _dbClientFactory = dbClientFactory;
+        }
+
         public override bool CanConvert(Type typeToConvert)
         {
             return typeToConvert == typeof(List<ISource>);
@@ -27,6 +35,7 @@ namespace DBMS_Core.Converters
                 var element = JsonSerializer.Deserialize(x.GetRawText(), sourceType);
                 ISource sourceElement = (ISource)element;
                 sourceElement.Url = x.GetProperty("url").GetString();
+                sourceElement.DbClientFactory = _dbClientFactory;
 
                 return sourceElement;
             });

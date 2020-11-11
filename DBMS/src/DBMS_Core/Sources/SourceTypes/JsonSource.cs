@@ -19,6 +19,12 @@ namespace DBMS_Core.Sources
 
         public override bool AllowMultipleSource => true;
 
+        public JsonSource(IDbClientFactory dbClientFactory):base(dbClientFactory)
+        { }
+
+        public JsonSource()
+        { }
+
         protected override IDbClient DbClient 
         {
             get

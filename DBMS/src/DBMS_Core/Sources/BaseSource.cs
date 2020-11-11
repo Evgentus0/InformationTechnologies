@@ -21,7 +21,16 @@ namespace DBMS_Core.Sources
         public abstract bool AllowMultipleSource { get; }
 
         protected IDbClient _dbClient;
+        public IDbClientFactory DbClientFactory { get; set; }
         protected abstract IDbClient DbClient { get; set; }
+
+        public BaseSource()
+        { }
+
+        public BaseSource(IDbClientFactory dbClientFactory)
+        {
+            DbClientFactory = dbClientFactory;
+        }
 
         public abstract void SetUrl(DataBase db, Table table);
 

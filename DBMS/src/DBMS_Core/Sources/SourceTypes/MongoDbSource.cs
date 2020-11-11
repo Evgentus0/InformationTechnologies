@@ -15,6 +15,12 @@ namespace DBMS_Core.Sources
 
         public override bool AllowMultipleSource => false;
 
+        public MongoDbSource(IDbClientFactory dbClientFactory) : base(dbClientFactory)
+        { }
+
+        public MongoDbSource()
+        { }
+
         protected override IDbClient DbClient
         {
             get

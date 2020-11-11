@@ -6,19 +6,19 @@ using System.Text;
 
 namespace DBMS.SqlServerSource
 {
-    public class DbClientFactory
+    public class DbClientFactory: IDbClientFactory
     {
-        public static IDbClient GetClient(string localhost, string db, string table = "")
+        public IDbClient GetSqlClient(string localhost, string db, string table = "")
         {
             return new DbClient(localhost, db, table);
         }
 
-        public static IDbClient GetMongoClient(string localhost, string db, string table = "")
+        public IDbClient GetMongoClient(string localhost, string db, string table = "")
         {
             return new MongoDbClient(localhost, db, table);
         }
 
-        public static IDbClient GetJsonClient(string path)
+        public IDbClient GetJsonClient(string path)
         {
             return new JsonDbClient(path);
         }

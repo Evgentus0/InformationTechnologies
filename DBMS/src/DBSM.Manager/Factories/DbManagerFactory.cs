@@ -1,6 +1,8 @@
-﻿using DBMS.Manager.RestApi;
+﻿using DBMS.Manager.Factories;
+using DBMS.Manager.RestApi;
 using DBMS.WebApiClient;
 using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 using DBMS_Core.Sources;
 using DBSM.Manager.Interfaces;
 using DBSM.Manager.Local;
@@ -10,46 +12,56 @@ using System.Text;
 
 namespace DBSM.Manager.Factories
 {
-    public static class DbManagerFactory
+    public class DbManagerFactory: IDbManagerFactory
     {
-        #region local
-        public static IDbManager GetDbManagerLocal(string path)
+        private IClient _client;
+        private IDataBaseServiceFactory _dataBaseServiceFactory;
+
+        public DbManagerFactory(IClient client, IDataBaseServiceFactory dataBaseServiceFactory)
         {
-            return new DbManagerLocal(DataBaseServiceFactory.GetDataBaseService(path));
+            _client = client;
+            _dataBaseServiceFactory = dataBaseServiceFactory;
         }
 
-        public static IDbManager GetDbManagerLocal(string name, string rootPath, long fileSize, SupportedSources source)
+
+        #region local
+        public IDbManager GetDbManagerLocal(string path)
         {
-            return new DbManagerLocal(DataBaseServiceFactory.GetDataBaseService(name, rootPath, fileSize, source));
+            return new DbManagerLocal(_dataBaseServiceFactory.GetDataBaseService(path));
+        }
+
+        public IDbManager GetDbManagerLocal(string name, string rootPath, long fileSize, SupportedSources source)
+        {
+            return new DbManagerLocal(_dataBaseServiceFactory.GetDataBaseService(name, rootPath, fileSize, source));
         }
         #endregion
 
 
         #region rest
-        public static IDbManager GetDbManagerRest(string name)
+        public IDbManager GetDbManagerRest(string name)
         {
             if (GetRemoteDbsList().Contains(name))
             {
-                return new DbManagerRest(name);
+                return new DbManagerRest(name, _client);
             }
             throw new ArgumentException($"Talbe with name: {name} does not exist!");
         }
-        public static IDbManager GetDbManagerRest(string name, long fileSize, SupportedSources source)
+        public IDbManager GetDbManagerRest(string name, long fileSize, SupportedSources source)
         {
             try
             {
-                new Client().CreateDb(name, fileSize, source);
+                _client.CreateDb(name, fileSize, source);
 
-                return new DbManagerRest(name);
+                return new DbManagerRest(name, _client);
             }
             catch(Exception ex)
             {
                 throw new Exception("Can not create db", ex);
             }
         }
-        public static List<string> GetRemoteDbsList()
+        public List<string> GetRemoteDbsList()
         {
-            return new Client().GetDbsList();
+            return _client.GetDbsList();
         }
         #endregion
     }

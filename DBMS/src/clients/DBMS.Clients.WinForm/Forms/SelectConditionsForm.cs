@@ -13,6 +13,8 @@ namespace DBMS.Clients.WinForm.Forms
 {
     public partial class SelectConditionsForm : Form
     {
+        private IServiceProvider _serviceProvider;
+
         public bool IsSet { get; set; }
         public SelectConditionsDto SelectConditions { get; set; }
 
@@ -22,8 +24,10 @@ namespace DBMS.Clients.WinForm.Forms
         private const string _deleteButton = "deleteButton", _validatorsButton = "validatorButton";
 
         private Dictionary<string, Field> _tempFields;
-        public SelectConditionsForm(List<Field> fields, bool hideTopOffsetGroup)
+        public SelectConditionsForm(List<Field> fields, bool hideTopOffsetGroup, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             InitializeComponent();
 
             groupBox1.Visible = !hideTopOffsetGroup;
@@ -104,7 +108,7 @@ namespace DBMS.Clients.WinForm.Forms
             var validators = SelectConditions.Validators.ContainsKey(field.Name) ?
                 SelectConditions.Validators[field.Name] : new List<DBMS_Core.Interfaces.IValidator>();
 
-            var form = new ValidatorsForm(validators, field.Type, false);
+            var form = new ValidatorsForm(validators, field.Type, false, _serviceProvider);
             form.ShowDialog();
 
             if (form.IsChanged)
