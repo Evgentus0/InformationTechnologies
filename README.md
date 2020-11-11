@@ -13,6 +13,7 @@ realInvl(interval);
 <b>Already done:</b>
 <ul>
   <li>2-3) Local DBMS</li>
+  <li>9) Server Client</li>
   <li>10) Rest API</li>
   <li>13-14) Web Project(ASP.NET Core WebApi)</li>
   <li>20) Sql Server Support</li>
