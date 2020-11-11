@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DBMS.WebApi.Infrastructure.Helpers;
-using DBMS.WebApi.Infrastructure.Interfaces;
-using DBMS.WebApi.Infrastructure.Services;
-using DBMS.WebApi.Settings;
+using DBMS.SharedModels.Infrastructure.Helpers;
+using DBMS.SharedModels.Infrastructure.Interfaces;
+using DBMS.SharedModels.Infrastructure.Services;
+using DBMS.SharedModels.Infrastructure.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -23,10 +23,10 @@ namespace DBMS.WebApi
         {
             Configuration = configuration;
 
-            Settings = Configuration.Get<Settings.Settings>();
+            Settings = Configuration.Get<Settings>();
         }
 
-        protected virtual Settings.Settings Settings { get; set; }
+        protected virtual Settings Settings { get; set; }
 
         public IConfiguration Configuration { get; }
 

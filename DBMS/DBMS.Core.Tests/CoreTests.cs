@@ -201,9 +201,9 @@ namespace DBMS.Core.Tests
             };
             var expectedData = new List<List<object>>()
             {
-                 new List<object>{"name1", 10, 3 },
-                 new List<object>{"name3", -12, 2},
-                 new List<object>{"name2", 124, -10},
+                new List<object>{"name1", 10, 3 },
+                new List<object>{"name3", -12, 2},
+                new List<object>{"name2", 124, -10},
                 new List<object>{"name7", 1123, 321321 },
                 new List<object>{"name8", -5132412, 232457}
             };

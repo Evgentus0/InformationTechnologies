@@ -17,5 +17,6 @@ namespace DBMS.SqlServerSource.Interfaces
         void ClearTable();
         void DeleteDatabase();
         string GetDb();
+        List<string> GetDbsNames();
     }
 }

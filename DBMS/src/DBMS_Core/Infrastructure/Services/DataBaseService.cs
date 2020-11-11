@@ -116,7 +116,7 @@ namespace DBMS_Core.Infrastructure.Services
                 DeleteTable(table.Name);
             }
 
-            DbWriterFactory.GetDbWriter(DataBase.Settings).DeleteDb(DataBase);
+            DbWriterFactory.GetDbWriter(DataBase.Settings.DefaultSource).DeleteDb(DataBase);
 
             this.DataBase = null;
         }

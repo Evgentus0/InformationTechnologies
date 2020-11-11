@@ -56,5 +56,7 @@ namespace DBMS.SqlServerSource
 	                                                DECLARE @sql NVARCHAR(max) =  'DROP DATABASE ' + @dbname;
 	                                                EXEC(@sql);
                                                 END";
+
+        public const string SelectAllDbsNames = @"SELECT name FROM master.dbo.sysdatabases";
     }
 }

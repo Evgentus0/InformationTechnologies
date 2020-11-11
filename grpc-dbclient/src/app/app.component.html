@@ -1,0 +1,50 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-menu">
+  <a class="navbar-brand" >Angular gRPC Client</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <span class="nav-link" >DB: {{dbName}}</span>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle"  id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Tables
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <ng-container *ngFor="let table of tables">
+            <span class="dropdown-item" (click)="selectTable(table)">{{table}}</span>
+          </ng-container>
+        </div>
+      </li>
+      <li class="nav-item active">
+        <span class="nav-link" >{{tableName}}</span>
+      </li>
+      <li class="nav-item dropdown" [style.display]="dataSet ? 'block' : 'none'">
+        <a class="nav-link dropdown-toggle"  id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Operations
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <span>
+              <span class="dropdown-item" (click)="union(tableNameUnionInput.value)">Union</span>
+              <mat-form-field style="width: 80%; margin-left: 10%;">
+                <input placeholder="Table name" matInput #tableNameUnionInput>
+              </mat-form-field>
+            </span>
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="db name" aria-label="Search" #dbNameInput>
+      <div class="btn btn-outline-success my-2 my-sm-0" (click)="connectToDb(dbNameInput.value)">Connect</div>
+    </form>
+  </div>
+</nav>
+
+<div>
+  <div [style.display]="dataSet ? 'block' : 'none'">
+    <app-mat-table></app-mat-table>
+  </div>
+</div>

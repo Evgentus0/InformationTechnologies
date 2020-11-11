@@ -38,7 +38,7 @@ namespace DBMS_Core.Sources
 
         public override void SetUrl(DataBase db, Table table)
         {
-            Url = $"{db.Settings.RootPath}\\{table.Name}{Constants.TableFileExtention}";
+            Url = $"{db.Settings.RootPath}\\{table.Name}{table.Sources.Count + 1}{Constants.TableFileExtention}";
             Create();
         }
     }

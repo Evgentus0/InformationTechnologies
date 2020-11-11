@@ -14,7 +14,7 @@ namespace DBMS.WebApiClient.Helpers
 
         public static RequestBuilder StartBuild(string prefix)
         {
-            return new RequestBuilder(new StringBuilder().Append(prefix));
+            return new RequestBuilder(new StringBuilder(prefix));
         }
 
         public RequestBuilder AddUrl(string url)

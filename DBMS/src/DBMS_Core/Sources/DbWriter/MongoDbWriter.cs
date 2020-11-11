@@ -25,6 +25,12 @@ namespace DBMS_Core.Sources.DbWriter
             return JsonSerializer.Deserialize<DataBase>(dbString);
         }
 
+        public List<string> GetDbsNames(string rootPath)
+        {
+            var client = DbClientFactory.GetMongoClient(rootPath, string.Empty);
+            return client.GetDbsNames();
+        }
+
         public void UpdateDb(DataBase dataBase)
         {
             var client = DbClientFactory.GetMongoClient(dataBase.Settings.RootPath, dataBase.Name);

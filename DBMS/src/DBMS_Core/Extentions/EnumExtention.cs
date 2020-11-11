@@ -69,7 +69,7 @@ namespace DBMS_Core.Extentions
 
         public static object GetDefaultValue(this SupportedTypes value)
         {
-            var type = Type.GetType(value.GetAssemblyDescription(Constants.SourceType));
+            var type = Type.GetType(value.GetAssemblyDescription(Constants.TypeDescription));
             if (type.IsValueType)
             {
                 return Activator.CreateInstance(type);

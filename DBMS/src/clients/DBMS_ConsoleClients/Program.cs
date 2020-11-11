@@ -11,6 +11,7 @@ using DBMS_Core.Sources;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS.SqlServerSource.Interfaces;
 using DBMS.SqlServerSource.Clients;
+using DBMS.SqlServerSource;
 
 namespace DBMS_ConsoleClients
 {
@@ -18,8 +19,12 @@ namespace DBMS_ConsoleClients
     {
         private static void Main(string[] args)
         {
-            MongoDb();
+            string server = @"DESKTOP-2UQRN34\SQLEXPRESS";
+
+            var dbs = DbWriterFactory.GetDbWriter(SupportedSources.SqlServer).GetDbsNames(server);
         }
+
+
 
         private static void Rest()
         {
