@@ -1,5 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light nav-menu">
-  <a class="navbar-brand" >gRPC</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark nav-menu">
+  <a class="navbar-brand" >Angular gRPC Client</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
@@ -19,7 +19,7 @@
           </ng-container>
         </div>
       </li>
-      <li class="nav-item">
+      <li class="nav-item active">
         <span class="nav-link" >{{tableName}}</span>
       </li>
       <li class="nav-item dropdown" [style.display]="dataSet ? 'block' : 'none'">
@@ -44,7 +44,7 @@
 </nav>
 
 <div>
-  <div >
-    <app-mat-table [style.display]="dataSet ? 'block' : 'none'"></app-mat-table>
+  <div [style.display]="dataSet ? 'block' : 'none'">
+    <app-mat-table></app-mat-table>
   </div>
 </div>

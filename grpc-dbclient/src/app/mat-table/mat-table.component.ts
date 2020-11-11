@@ -71,13 +71,12 @@ export class MatTableComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if(result.event == 'Add'){
         this.addRowData(result.data);
-      }else if(result.event == 'Update'){
-        this.updateRowData(result.data);
-      }else if(result.event == 'Delete'){
-        this.deleteRowData(result.data);
       }
-      else{
-        alert("Incorrect operation!");
+      else if(result.event == 'Update'){
+        this.updateRowData(result.data);
+      }
+      else if(result.event == 'Delete'){
+        this.deleteRowData(result.data);
       }
     });
   }
