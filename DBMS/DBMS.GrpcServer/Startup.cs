@@ -55,6 +55,7 @@ namespace DBMS.GrpcServer
         private void ConfigureIoC(IServiceCollection services)
         {
             services.AddSingleton(x => Settings);
+            services.AddScoped<IGrpcModelMapper, GrpcModelMapper>();
 
             services.AddSharedFunctionality();
         }
