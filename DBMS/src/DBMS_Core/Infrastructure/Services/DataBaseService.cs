@@ -2,6 +2,7 @@
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using DBMS_Core.Sources;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ using static DBMS_Core.Constants;
 
 namespace DBMS_Core.Infrastructure.Services
 {
-    public class DataBaseService: IDataBaseService
+    internal class DataBaseService: IDataBaseService
     {
         private IFileWorker _fileWorker;
         private DataBase DataBase {  get;  set; }
@@ -52,10 +53,27 @@ namespace DBMS_Core.Infrastructure.Services
 
         public DataBaseService(string path)
         {
-            _fileWorker = FileWorkerFactory.GetFileWorker(DataBase);
+            SupportedSources source = ResolvePath(path);
+
+            _fileWorker = FileWorkerFactory.GetFileWorker(new DataBase { Settings = new Settings { DefaultSource = source} });
             DataBase = _fileWorker.GetDataBaseFromFile(path);
 
             _fileWorker.DataBase = DataBase;
+        }
+
+        private SupportedSources ResolvePath(string path)
+        {
+            SupportedSources source;
+            if (path.Split(Constants.Separator).Length == 2)
+            {
+                if (path.Split(Constants.Separator)[0].StartsWith("mongodb"))
+                    source = SupportedSources.MongoDb;
+                else
+                    source = SupportedSources.SqlServer;
+            }
+            else
+                source = SupportedSources.Json;
+            return source;
         }
 
         public void AddTable(string tableName)
@@ -87,6 +105,20 @@ namespace DBMS_Core.Infrastructure.Services
             {
                 yield return TableServiceFactory.GetTableService(table, _fileWorker);
             }
+        }
+
+        public void DeleteDb()
+        {
+            var tables = DataBase.Tables.ToList();
+
+            foreach (var table in tables)
+            {
+                DeleteTable(table.Name);
+            }
+
+            DbWriterFactory.GetDbWriter(DataBase.Settings.DefaultSource).DeleteDb(DataBase);
+
+            this.DataBase = null;
         }
     }
 }

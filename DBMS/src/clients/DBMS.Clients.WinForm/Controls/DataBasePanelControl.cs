@@ -1,5 +1,6 @@
 ﻿using DBMS.Clients.WinForm.Forms;
 using DBMS_Core.Interfaces;
+using DBSM.Manager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,8 +16,8 @@ namespace DBMS.Clients.WinForm.Controls
 
         private List<(string name, Action<object, EventArgs> action)> _menuItemsList;
 
-        private IDataBaseService _dataBaseService;
-        public DataBasePanelControl(IDataBaseService dataBaseService)
+        private IDbManager _dataBaseService;
+        public DataBasePanelControl(IDbManager dataBaseService)
         {
             _settings = new Settings();
             _dataBaseService = dataBaseService;
@@ -113,7 +114,7 @@ namespace DBMS.Clients.WinForm.Controls
             ContextMenuStrip = contextMenu;
         }
 
-        public void AddSubButton(ITableService tableService)
+        public void AddSubButton(ITableManager tableService)
         {
             var button = new TableButtonControl(tableService, _dataBaseService);
 

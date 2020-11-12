@@ -14,7 +14,6 @@ namespace DBMS.Clients.WinForm.Forms
     {
         public bool IsSet { get; set; }
         public DbSettingsDto Data { get; set; }
-        private string _path;
 
         public SetDbNameForm()
         {
@@ -30,7 +29,7 @@ namespace DBMS.Clients.WinForm.Forms
             Close();
         }
 
-        private bool IsValid => !string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(_path);
+        private bool IsValid => !string.IsNullOrEmpty(textBoxName.Text) && !string.IsNullOrEmpty(textBoxPath.Text);
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
@@ -40,7 +39,7 @@ namespace DBMS.Clients.WinForm.Forms
                 Data = new DbSettingsDto
                 {
                     Name = textBoxName.Text,
-                    RootPath = _path,
+                    RootPath = textBoxPath.Text,
                     FileSize = (long)numericUpDownFIleSize.Value,
                     DefaultSource = (SupportedSources)comboBoxSourceType.SelectedValue
                 };
@@ -50,19 +49,6 @@ namespace DBMS.Clients.WinForm.Forms
             else
             {
                 MessageBox.Show(Constants.EnterNewDb.EnterData);
-            }
-        }
-
-        private void buttonPath_Click(object sender, EventArgs e)
-        {
-            DialogResult result = folderBrowserDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                _path = folderBrowserDialog.SelectedPath;
-            }
-            else
-            {
-                MessageBox.Show("Incorrect path");
             }
         }
     }

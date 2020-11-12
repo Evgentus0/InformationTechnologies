@@ -1,5 +1,6 @@
-﻿using DBMS_Core.Comparers;
-using DBMS_Core.Interfaces;
+﻿using DBMS_Core.Interfaces;
+using DBMSM.Comparers;
+using DBSM.Manager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,14 +15,14 @@ namespace DBMS.Clients.WinForm.Forms
 {
     public partial class UnionTablesForm : Form
     {
-        private IDataBaseService _dataBaseService;
+        private IDbManager _dataBaseService;
         private Settings _settings;
-        private List<ITableService> _tables;
-        private ITableService _tableService;
+        private List<ITableManager> _tables;
+        private ITableManager _tableService;
 
         public bool IsSet { get; set; }
         public List<List<object>> Data { get; set; }
-        public UnionTablesForm(IDataBaseService dataBaseService, ITableService tableService)
+        public UnionTablesForm(IDbManager dataBaseService, ITableManager tableService)
         {
             InitializeComponent();
             _settings = new Settings();
@@ -32,7 +33,7 @@ namespace DBMS.Clients.WinForm.Forms
             _tableService = tableService;
             _dataBaseService = dataBaseService;
             IsSet = false;
-            _tables = new List<ITableService>();
+            _tables = new List<ITableManager>();
         }
 
         private void buttonAddTable_Click(object sender, EventArgs e)
@@ -82,7 +83,7 @@ namespace DBMS.Clients.WinForm.Forms
 
             if(combobxes.Count > 0)
             {
-                combobxes.ForEach(x => _tables.Add((ITableService)x.SelectedItem));
+                combobxes.ForEach(x => _tables.Add((ITableManager)x.SelectedItem));
                 _tables = _tables.Distinct(new TableServiceComparer()).ToList();
 
                 _tables.RemoveAll(x => x.Table.Name == _tableService.Table.Name);

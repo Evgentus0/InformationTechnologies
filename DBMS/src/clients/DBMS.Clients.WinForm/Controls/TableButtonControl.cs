@@ -3,6 +3,7 @@ using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Factories;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
+using DBSM.Manager.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -15,13 +16,13 @@ namespace DBMS.Clients.WinForm.Controls
     {
         private Settings _settings;
 
-        private ITableService _tableService;
-        private IDataBaseService _dataBaseService;
+        private ITableManager _tableService;
+        private IDbManager _dataBaseService;
 
         private OpenFileDialog openFile;
         private DataGridView dataGrid;
 
-        public TableButtonControl(ITableService tableService, IDataBaseService dataBaseService)
+        public TableButtonControl(ITableManager tableService, IDbManager dataBaseService)
         {
             _settings = new Settings();
 

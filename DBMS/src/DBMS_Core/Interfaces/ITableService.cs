@@ -20,7 +20,6 @@ namespace DBMS_Core.Interfaces
         void UpdateRows(List<List<object>> rows);
         void DeleteRows(Dictionary<string, List<IValidator>> conditions);
         void DeleteRows(List<Guid> ids);
-        //void UpdateRow(Dictionary<string, object> keyValues, List<List<object>> rows);
 
         List<List<object>> Select();
         List<List<object>> Select(int top, int offset);

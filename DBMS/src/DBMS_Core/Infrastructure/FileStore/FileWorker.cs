@@ -14,21 +14,19 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Infrastructure.FileStore
 {
-    public class FileWorker : IFileWorker
+    internal class FileWorker : IFileWorker
     {
         public DataBase DataBase { get; set; }
+        private IDbWriter _dbWriter;
         public FileWorker(DataBase dataBase)
         {
             DataBase = dataBase;
+            _dbWriter = DbWriterFactory.GetDbWriter(dataBase.Settings.DefaultSource);
         }
 
         public DataBase GetDataBaseFromFile(string filePath)
         {
-            string data = File.ReadAllText(filePath);
-
-            var dataBase = JsonSerializer.Deserialize<DataBase>(data);
-
-            return dataBase;
+            return _dbWriter.GetDb(filePath);
         }
 
         public void AddNewColoumn(Table table, SupportedTypes type)
@@ -118,7 +116,7 @@ namespace DBMS_Core.Infrastructure.FileStore
 
             Parallel.ForEach(table.Sources, source =>
             {
-                File.Delete(source.Url);
+                source.Delete();
             });
         }
 
@@ -126,7 +124,8 @@ namespace DBMS_Core.Infrastructure.FileStore
         {
             if (!rows.IsNullOrEmpty())
             {
-                if (table.Sources.IsNullOrEmpty() || table.Sources.Last().SizeInBytes >= DataBase.Settings.FileSize)
+                if (table.Sources.IsNullOrEmpty() || (table.Sources.Last().AllowMultipleSource 
+                    &&  table.Sources.Last().SizeInBytes >= DataBase.Settings.FileSize))
                 {
                     AddNewSource(table);
                 }
@@ -264,9 +263,7 @@ namespace DBMS_Core.Infrastructure.FileStore
 
         public void UpdateDataBaseFile()
         {
-            var stringData = JsonSerializer.Serialize(DataBase);
-
-            File.WriteAllText($"{DataBase.Settings.RootPath}\\{DataBase.Name}{Constants.DataBaseFileExtention}", stringData);
+            _dbWriter.UpdateDb(DataBase);
         }
 
         public void UpdateRows(Table table, List<List<object>> rows)
@@ -306,10 +303,9 @@ namespace DBMS_Core.Infrastructure.FileStore
         private void AddNewSource(Table table)
         {
             var source = SourceFactory.GetSourceObject(DataBase.Settings.DefaultSource,
-                    DataBase.Settings.RootPath, $"{table.Name}{table.Sources.Count + 1}{Constants.TableFileExtention}");
+                    DataBase, table);
 
             table.Sources.Add(source);
-            using (File.Create(source.Url)) { }
 
             UpdateDataBaseFile();
         }

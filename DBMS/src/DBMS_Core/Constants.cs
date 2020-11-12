@@ -4,11 +4,16 @@ using System.Text;
 
 namespace DBMS_Core
 {
-    static class Constants
+    public static class Constants
     {
         public const string DataBaseFileExtention = ".edbf";
         public const string TableFileExtention = ".etf";
         public const string TryParseMethod = "TryParse";
         public const string TypeProperty = "type";
+        public const char Separator = '|';
+
+        public const string SourceType = "sourceType";
+        public const string TypeDescription = "typeDescription";
+        public const string DbWriterType = "dbWriterType";
     }
 }
