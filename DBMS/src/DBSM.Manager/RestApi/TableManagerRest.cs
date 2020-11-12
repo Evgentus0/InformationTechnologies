@@ -9,7 +9,7 @@ using System.Text;
 
 namespace DBMS.Manager.RestApi
 {
-    class TableManagerRest: ITableManager
+    public class TableManagerRest: ITableManager
     {
         private Table _table;
         private string _tableName;

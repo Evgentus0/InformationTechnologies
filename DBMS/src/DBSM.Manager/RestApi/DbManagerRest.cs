@@ -9,7 +9,7 @@ using System.Text;
 
 namespace DBMS.Manager.RestApi
 {
-    class DbManagerRest : IDbManager
+    public class DbManagerRest : IDbManager
     {
         private IClient _client;
 
