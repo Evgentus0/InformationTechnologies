@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    class JsonSource : BaseSource
+    public class JsonSource : BaseSource
     {
         public override string Type => typeof(JsonSource).AssemblyQualifiedName;
 

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace DBMS_Core.Sources
 {
-    class MongoDbSource : BaseSource
+    public class MongoDbSource : BaseSource
     {
         public override string Type => typeof(MongoDbSource).AssemblyQualifiedName;
 

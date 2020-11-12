@@ -23,5 +23,31 @@ namespace DBMS_Core.Models
             Sources = new List<ISource>();
             Schema = new TableSchema();
         }
+
+        public override bool Equals(object obj)
+        {
+            var table = (Table)obj;
+
+            return Name == table.Name
+                && Schema.Equals(table.Schema)
+                && new Func<bool>(() =>
+                {
+                    if(Sources.Count == table.Sources.Count)
+                    {
+                        for(int i = 0; i < Sources.Count; i++)
+                        {
+                            if (Sources[i].Equals(table.Sources[i]))
+                                return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }).Invoke();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

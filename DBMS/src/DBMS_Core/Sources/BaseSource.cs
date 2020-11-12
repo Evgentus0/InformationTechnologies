@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    abstract class BaseSource : ISource
+    public abstract class BaseSource : ISource
     {
         public string Url { get; set; }
 
@@ -78,6 +78,14 @@ namespace DBMS_Core.Sources
 
                 await DbClient.InsertDataAsync(newStringData);
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var source = (ISource)obj;
+
+            return Type == source.Type
+                && Url == source.Url;
         }
     }
 }

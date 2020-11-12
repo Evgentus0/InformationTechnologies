@@ -28,5 +28,13 @@ namespace DBMS_Core.Models
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            var field = (Field)obj;
+
+            return Name == field.Name
+                && Type == field.Type;
+        }
     }
 }

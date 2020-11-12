@@ -11,7 +11,7 @@ using System.Text.Encodings.Web;
 
 namespace DBMS_Core.Sources.DbWriter
 {
-    class JsonDbWriter : IDbWriter
+    public class JsonDbWriter : IDbWriter
     {
         private IDbClientFactory _dbClientFactory;
 
