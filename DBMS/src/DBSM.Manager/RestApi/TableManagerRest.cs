@@ -14,15 +14,15 @@ namespace DBMS.Manager.RestApi
         private Table _table;
         private string _tableName;
         private string _dbName;
-        private Client _client;
+        private IClient _client;
 
         private bool _isTableDirty;
-        public TableManagerRest(Table table, string dbName)
+        public TableManagerRest(Table table, string dbName, IClient client)
         {
             _table = table;
             _tableName = Table.Name;
             _dbName = dbName;
-            _client = new Client();
+            _client = client;
 
             _isTableDirty = false;
         }

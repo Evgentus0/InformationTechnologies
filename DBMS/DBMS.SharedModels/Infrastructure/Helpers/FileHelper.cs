@@ -2,6 +2,7 @@
 using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS.SqlServerSource;
 using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Sources;
 using System;
@@ -16,14 +17,21 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
     public class FileHelper : IFileHelper
     {
         private Settings.Settings _setting;
-        public FileHelper(Settings.Settings setting)
+        private IDbWriterFactory _dbWriterFactory;
+        private IDataBaseServiceFactory _dataBaseServiceFactory;
+
+        public FileHelper(Settings.Settings setting, 
+            IDbWriterFactory dbWriterFactory,
+            IDataBaseServiceFactory dataBaseServiceFactory)
         {
             _setting = setting;
+            _dbWriterFactory = dbWriterFactory;
+            _dataBaseServiceFactory = dataBaseServiceFactory;
         }
 
         public async Task CreateDb(DataBase db)
         {
-            await Task.Run(() => DataBaseServiceFactory.GetDataBaseService(db.Name, $"{_setting.RootPath[db.Settings.DefaultSource]}", db.Settings.FileSize, db.Settings.DefaultSource));
+            await Task.Run(() => _dataBaseServiceFactory.GetDataBaseService(db.Name, $"{_setting.RootPath[db.Settings.DefaultSource]}", db.Settings.FileSize, db.Settings.DefaultSource));
         }
 
         public async Task<IDataBaseService> GetDb(string dbName)
@@ -35,7 +43,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
                     var dbNames = GetDbNamesBySource(item.Key);
                     if (dbNames.Contains(dbName))
                     {
-                        return DataBaseServiceFactory.GetDataBaseService(RootFormat(item.Key, dbName));
+                        return _dataBaseServiceFactory.GetDataBaseService(RootFormat(item.Key, dbName));
                     }
                 }
                 throw new ArgumentException($"Database with name: {dbName} does not exist!");
@@ -71,7 +79,7 @@ namespace DBMS.SharedModels.Infrastructure.Helpers
         }
         private List<string> GetDbNamesBySource(SupportedSources source)
         {
-            return DbWriterFactory.GetDbWriter(source).GetDbsNames(_setting.RootPath[source]);
+            return _dbWriterFactory.GetDbWriter(source).GetDbsNames(_setting.RootPath[source]);
         }
     }
 }

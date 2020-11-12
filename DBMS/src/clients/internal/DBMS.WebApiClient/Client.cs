@@ -14,28 +14,29 @@ using System.Security.Cryptography.X509Certificates;
 using DBMS.SharedModels.ResuestHelpers;
 using DBMS_Core.Sources;
 using System.Runtime.CompilerServices;
+using DBMS.SharedModels.Infrastructure.Interfaces;
+using DBMS.SharedModels.Infrastructure.Helpers;
 
 namespace DBMS.WebApiClient
 {
-    public class Client
+    public class Client: IClient
     {
-        private Mapper _mapper;
+        private IDbMapper _mapper;
 
         private Settings.Settings _settings;
         private HttpClient _client;
 
-        public Client()
+        public Client(IDbMapper dbMapper, HttpClient httpClient)
         {
             _settings = new Settings.Settings();
-            _client = new HttpClient();
-            _mapper = new Mapper();
+            _client = httpClient;
+            _mapper = dbMapper;
         }
 
         public void AddTable(string dbName, string tableName)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.DbController)
-                .AddUrl(dbName)
+                .AddUrl(_settings.Constants.DbController, dbName)
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
@@ -45,8 +46,7 @@ namespace DBMS.WebApiClient
         public void DeleteTable(string dbName, string tableName)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.DbController)
-                .AddUrl(dbName)
+                .AddUrl(_settings.Constants.DbController, dbName)
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
@@ -75,8 +75,7 @@ namespace DBMS.WebApiClient
         public Table GetTable(string dbName, string tableName)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.DbController)
-                .AddUrl(dbName)
+                .AddUrl(_settings.Constants.DbController, dbName)
                 .WithParams((_settings.Constants.TableName, tableName))
                 .Build();
 
@@ -88,8 +87,7 @@ namespace DBMS.WebApiClient
         public IEnumerable<Table> GetTables(string dbName)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.DbController)
-                .AddUrl(dbName)
+                .AddUrl(_settings.Constants.DbController, dbName)
                 .AddUrl(_settings.Endpoints.AllTables)
                 .Build();
 
@@ -101,10 +99,8 @@ namespace DBMS.WebApiClient
         public void AddField(string dbName, string tableName, string fieldName, SupportedTypes type, List<IValidator> validators)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.AddField)
+                .AddUrl(_settings.Constants.TableController, dbName, 
+                    tableName, _settings.Endpoints.AddField)
                 .Build();
 
             var field = new Dto.Field
@@ -120,10 +116,8 @@ namespace DBMS.WebApiClient
         public void DeleteField(string dbName, string tableName, string name)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.DeleteField)
+                .AddUrl(_settings.Constants.TableController, dbName, 
+                    tableName, _settings.Endpoints.DeleteField)
                 .WithParams((_settings.Constants.FieldName, name))
                 .Build();
 
@@ -133,11 +127,8 @@ namespace DBMS.WebApiClient
         public void DeleteRows(string dbName, string tableName, Dictionary<string, List<IValidator>> conditions)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.DeleteConditions)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.DeleteConditions)
                 .Build();
 
             var conditionsDto = new Dictionary<string, List<Dto.Validator>>();
@@ -152,11 +143,8 @@ namespace DBMS.WebApiClient
         public void DeleteRows(string dbName, string tableName, List<Guid> ids)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.DeleteIds)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.DeleteIds)
                 .Build();
 
 
@@ -166,10 +154,8 @@ namespace DBMS.WebApiClient
         public void InsertData(string dbName, string tableName, List<List<object>> lists)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
+                .AddUrl(_settings.Constants.TableController, 
+                    dbName, tableName, _settings.Endpoints.Data)
                 .Build();
 
 
@@ -179,11 +165,8 @@ namespace DBMS.WebApiClient
         public List<List<object>> Select(string dbName, string tableName)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.Select)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.Select)
                 .Build();
 
             var selectRequest = new SelectRequest
@@ -200,11 +183,8 @@ namespace DBMS.WebApiClient
         public List<List<object>> Select(string dbName, string tableName, int top, int offset)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.Select)
+                .AddUrl(_settings.Constants.TableController, dbName, 
+                    tableName, _settings.Endpoints.Data, _settings.Endpoints.Select)
                 .Build();
 
             var selectRequest = new SelectRequest
@@ -221,11 +201,8 @@ namespace DBMS.WebApiClient
         public List<List<object>> Select(string dbName, string tableName, Dictionary<string, List<IValidator>> conditions)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.Select)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.Select)
                 .Build();
 
             var conditionsDto = new Dictionary<string, List<Dto.Validator>>();
@@ -249,11 +226,8 @@ namespace DBMS.WebApiClient
         public List<List<object>> Select(string dbName, string tableName, int top, int offset, Dictionary<string, List<IValidator>> conditions)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.Select)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.Select)
                 .Build();
 
             var conditionsDto = new Dictionary<string, List<Dto.Validator>>();
@@ -277,11 +251,8 @@ namespace DBMS.WebApiClient
         public List<List<object>> Union(string dbName, string tableName, Table[] tables)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
-                .AddUrl(_settings.Endpoints.Union)
+                .AddUrl(_settings.Constants.TableController, dbName, tableName, 
+                    _settings.Endpoints.Data, _settings.Endpoints.Union)
                 .Build();
 
             var list = tables.Select(x => x.Name);
@@ -294,10 +265,8 @@ namespace DBMS.WebApiClient
         public void UpdateRows(string dbName, string tableName, List<List<object>> rows)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(tableName)
-                .AddUrl(_settings.Endpoints.Data)
+                .AddUrl(_settings.Constants.TableController, 
+                    dbName, tableName, _settings.Endpoints.Data)
                 .Build();
 
 
@@ -307,10 +276,8 @@ namespace DBMS.WebApiClient
         public void UpdateSchema(string dbName, Table table)
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.TableController)
-                .AddUrl(dbName)
-                .AddUrl(table.Name)
-                .AddUrl(_settings.Endpoints.UpdateSchema)
+                .AddUrl(_settings.Constants.TableController, dbName, 
+                    table.Name, _settings.Endpoints.UpdateSchema)
                 .Build();
 
             var tableDto = new Dto.Table
@@ -332,8 +299,7 @@ namespace DBMS.WebApiClient
         public List<string> GetDbsList()
         {
             var url = RequestBuilder.StartBuild(_settings.Host)
-                .AddUrl(_settings.Constants.DbController)
-                .AddUrl(_settings.Endpoints.GetAllDb)
+                .AddUrl(_settings.Constants.DbController, _settings.Endpoints.GetAllDb)
                 .Build();
 
             var dbsList = GetRequest<List<string>>(url);

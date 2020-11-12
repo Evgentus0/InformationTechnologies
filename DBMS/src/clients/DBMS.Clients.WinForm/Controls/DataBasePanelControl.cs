@@ -11,14 +11,18 @@ namespace DBMS.Clients.WinForm.Controls
 {
     class DataBasePanelControl: Panel
     {
+        private IServiceProvider _serviceProvider;
+
         private bool _isCollapsed;
         private Settings _settings;
 
         private List<(string name, Action<object, EventArgs> action)> _menuItemsList;
 
         private IDbManager _dataBaseService;
-        public DataBasePanelControl(IDbManager dataBaseService)
+        public DataBasePanelControl(IDbManager dataBaseService, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             _settings = new Settings();
             _dataBaseService = dataBaseService;
 
@@ -116,7 +120,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         public void AddSubButton(ITableManager tableService)
         {
-            var button = new TableButtonControl(tableService, _dataBaseService);
+            var button = new TableButtonControl(tableService, _dataBaseService, _serviceProvider);
 
             Controls.Add(button);
             MaximumSize = new Size(_settings.LeftSideButtonWidth, MaxHeight);

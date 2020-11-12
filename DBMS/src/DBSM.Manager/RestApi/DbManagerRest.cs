@@ -11,7 +11,7 @@ namespace DBMS.Manager.RestApi
 {
     class DbManagerRest : IDbManager
     {
-        private Client _client;
+        private IClient _client;
 
         public ITableManager this[string key]
         {
@@ -19,16 +19,16 @@ namespace DBMS.Manager.RestApi
             {
                 Table tableService = _client.GetTable(Name, key);
 
-                return new TableManagerRest(tableService, Name);
+                return new TableManagerRest(tableService, Name, _client);
             }
         }
 
         public string Name { get; }
 
-        public DbManagerRest(string dbName)
+        public DbManagerRest(string dbName, IClient client)
         {
             Name = dbName;
-            _client = new Client();
+            _client = client;
         }
 
         public void AddTable(string tableName)
@@ -43,7 +43,7 @@ namespace DBMS.Manager.RestApi
 
         public IEnumerable<ITableManager> GetTables()
         {
-            return _client.GetTables(Name).Select(x => new TableManagerRest(x, Name));
+            return _client.GetTables(Name).Select(x => new TableManagerRest(x, Name, _client));
         }
     }
 }

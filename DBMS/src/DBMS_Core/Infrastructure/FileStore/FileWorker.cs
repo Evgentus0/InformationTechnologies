@@ -1,5 +1,6 @@
 ﻿using DBMS_Core.Extentions;
 using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using DBMS_Core.Models.Types;
@@ -17,11 +18,18 @@ namespace DBMS_Core.Infrastructure.FileStore
     internal class FileWorker : IFileWorker
     {
         public DataBase DataBase { get; set; }
+
+        private ISourceFactory _sourceFactory;
+
         private IDbWriter _dbWriter;
-        public FileWorker(DataBase dataBase)
+        public FileWorker(DataBase dataBase, 
+            IDbWriterFactory dbWriterFactory,
+            ISourceFactory sourceFactory)
         {
+            _sourceFactory = sourceFactory;
+
             DataBase = dataBase;
-            _dbWriter = DbWriterFactory.GetDbWriter(dataBase.Settings.DefaultSource);
+            _dbWriter = dbWriterFactory.GetDbWriter(dataBase.Settings.DefaultSource);
         }
 
         public DataBase GetDataBaseFromFile(string filePath)
@@ -302,7 +310,7 @@ namespace DBMS_Core.Infrastructure.FileStore
 
         private void AddNewSource(Table table)
         {
-            var source = SourceFactory.GetSourceObject(DataBase.Settings.DefaultSource,
+            var source = _sourceFactory.GetSourceObject(DataBase.Settings.DefaultSource,
                     DataBase, table);
 
             table.Sources.Add(source);

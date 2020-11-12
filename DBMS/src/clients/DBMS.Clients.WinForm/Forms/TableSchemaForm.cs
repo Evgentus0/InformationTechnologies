@@ -19,8 +19,12 @@ namespace DBMS.Clients.WinForm.Forms
         private ITableManager _tableService;
         private Settings _settings;
 
-        public TableSchemaForm(ITableManager tableService)
+        private IServiceProvider _serviceProvider;
+
+        public TableSchemaForm(ITableManager tableService, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             InitializeComponent();
             _settings = new Settings();
 
@@ -74,7 +78,7 @@ namespace DBMS.Clients.WinForm.Forms
 
         private void AddFieldButton_Click(object sender, EventArgs e)
         {
-            var form = new AddFieldForm();
+            var form = new AddFieldForm(_serviceProvider);
 
             form.ShowDialog();
 
@@ -117,7 +121,7 @@ namespace DBMS.Clients.WinForm.Forms
         {
             var field = (Field)((Button)sender).Tag;
 
-            var form = new ValidatorsForm(field.Validators, field.Type, true);
+            var form = new ValidatorsForm(field.Validators, field.Type, true, _serviceProvider);
 
             form.ShowDialog();
         }

@@ -13,12 +13,16 @@ namespace DBMS.Clients.WinForm.Forms
 {
     public partial class AddFieldForm : Form
     {
+        private IServiceProvider _serviceProvider;
+
         public Field Field { get; set; }
         public bool IsSet { get; set; }
         private List<IValidator> validators;
 
-        public AddFieldForm()
+        public AddFieldForm(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             InitializeComponent();
 
             validators = new List<IValidator>();
@@ -34,7 +38,7 @@ namespace DBMS.Clients.WinForm.Forms
         {
             if (comboBoxType.SelectedItem != null)
             {
-                var form = new ValidatorsForm(validators, (SupportedTypes)comboBoxType.SelectedItem, false);
+                var form = new ValidatorsForm(validators, (SupportedTypes)comboBoxType.SelectedItem, false, _serviceProvider);
 
                 form.ShowDialog();
 

@@ -6,11 +6,15 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Linq;
 using DBMS_Core.Extentions;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DBMS.Clients.WinForm.Forms
 {
     public partial class ValidatorsForm : Form
     {
+        private IServiceProvider _serviceProvider;
+
         public bool IsChanged { get; set; }
         public List<IValidator> Validators { get; set; }
         private SupportedTypes _type;
@@ -18,8 +22,10 @@ namespace DBMS.Clients.WinForm.Forms
 
         private bool _isDisabled;
 
-        public ValidatorsForm(List<IValidator> validators, SupportedTypes type, bool isDisabled)
+        public ValidatorsForm(List<IValidator> validators, SupportedTypes type, bool isDisabled, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             InitializeComponent();
 
             Validators = validators ?? new List<IValidator>();
@@ -109,7 +115,7 @@ namespace DBMS.Clients.WinForm.Forms
 
         private void AddValidator_Click(object sender, EventArgs e)
         {
-            var form = new AddValidatorForm(_type);
+            var form = new AddValidatorForm(_type, _serviceProvider.GetService<IValidatorsFactory>());
             form.ShowDialog();
 
             if (form.IsSet)
