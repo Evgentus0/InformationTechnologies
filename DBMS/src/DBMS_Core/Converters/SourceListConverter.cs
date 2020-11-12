@@ -1,4 +1,5 @@
-﻿using DBMS.SqlServerSource.Interfaces;
+﻿using DBMS.SqlServerSource;
+using DBMS.SqlServerSource.Interfaces;
 using DBMS_Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,9 @@ namespace DBMS_Core.Converters
     {
         IDbClientFactory _dbClientFactory;
 
-        public SourceListConverter(IDbClientFactory dbClientFactory)
+        public SourceListConverter()
         {
-            _dbClientFactory = dbClientFactory;
+            _dbClientFactory = new DbClientFactory();
         }
 
         public override bool CanConvert(Type typeToConvert)

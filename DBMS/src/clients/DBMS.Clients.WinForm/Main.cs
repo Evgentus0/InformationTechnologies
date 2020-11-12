@@ -30,7 +30,7 @@ namespace DBMS.Clients.WinForm
             SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
             
 
-            _formManager = new DbFormManagerLocal(_serviceProvider);
+            _formManager = new DbFormManagerRemote(_serviceProvider);
         }
 
         private void InitMenu()
