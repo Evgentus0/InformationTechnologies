@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace DBMS_Core.Sources.DbWriter
 {
-    class MongoDbWriter : IDbWriter
+    public class MongoDbWriter : IDbWriter
     {
         private IDbClientFactory _dbClientFactory;
 

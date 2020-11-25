@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace DBMS_Core.Models
@@ -17,6 +18,32 @@ namespace DBMS_Core.Models
         {
             Tables = new List<Table>();
             Settings = new Settings();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var db = (DataBase)obj;
+
+            return Name == db.Name
+                && Settings.Equals(db.Settings)
+                && new Func<bool>(() =>  //Compare table
+                {
+                    if (Tables.Count == db.Tables.Count)
+                    {
+                        for (int i = 0; i < Tables.Count; i++)
+                        {
+                            if (!Tables[i].Equals(db.Tables[i]))
+                                return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }).Invoke();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

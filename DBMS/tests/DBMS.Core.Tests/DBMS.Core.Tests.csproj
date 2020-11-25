@@ -10,13 +10,15 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.9" />
+    <PackageReference Include="Moq" Version="4.15.1" />
     <PackageReference Include="nunit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\DBMS_Core\DBMS_Core.csproj" />
+    <ProjectReference Include="..\..\src\DBMS_Core\DBMS_Core.csproj" />
+    <ProjectReference Include="..\..\src\DBSM.Manager\DBMS.Manager.csproj" />
   </ItemGroup>
 
   <ItemGroup>

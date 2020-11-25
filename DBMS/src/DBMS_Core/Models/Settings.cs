@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace DBMS_Core
+namespace DBMS_Core.Models
 {
     public class Settings
     {
@@ -13,5 +13,14 @@ namespace DBMS_Core
         [JsonPropertyName("fileSize")]
         public long FileSize { get; set; }
         public SupportedSources DefaultSource { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var settings = (Settings)obj;
+
+            return RootPath == settings.RootPath
+                && FileSize == settings.FileSize
+                && DefaultSource == settings.DefaultSource;
+        }
     }
 }

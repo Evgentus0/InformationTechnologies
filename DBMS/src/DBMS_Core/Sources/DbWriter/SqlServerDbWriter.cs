@@ -10,7 +10,7 @@ using System.Text.Json;
 
 namespace DBMS_Core.Sources.DbWriter
 {
-    class SqlServerDbWriter : IDbWriter
+    public class SqlServerDbWriter : IDbWriter
     {
         private IDbClientFactory _dbClientFactory;
 

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    class SqlServerSource : BaseSource
+    public class SqlServerSource : BaseSource
     {
         public override string Type => typeof(SqlServerSource).AssemblyQualifiedName;
 
