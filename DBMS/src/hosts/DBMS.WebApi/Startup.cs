@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DBMS.SharedModels.Extentions;
 using DBMS.SharedModels.Infrastructure.Helpers;
 using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS.SharedModels.Infrastructure.Services;
@@ -42,10 +43,8 @@ namespace DBMS.WebApi
         protected virtual void ConfigureIoC(IServiceCollection services)
         {
             services.AddSingleton(x => Settings);
-            services.AddScoped<IDbDal, DbDal>();
-            services.AddScoped<IDbMapper, DbMapper>();
-            services.AddScoped<IFileHelper, FileHelper>();
-            services.AddScoped<ITableDal, TableDal>();
+
+            services.AddSharedFunctionality();
         }
         private void ConfigureCors(IServiceCollection services)
         {

@@ -14,6 +14,8 @@ namespace DBMS.Clients.WinForm.Controls
 {
     internal class TableButtonControl : Button
     {
+        private IServiceProvider _serviceProvider;
+
         private Settings _settings;
 
         private ITableManager _tableService;
@@ -22,8 +24,10 @@ namespace DBMS.Clients.WinForm.Controls
         private OpenFileDialog openFile;
         private DataGridView dataGrid;
 
-        public TableButtonControl(ITableManager tableService, IDbManager dataBaseService)
+        public TableButtonControl(ITableManager tableService, IDbManager dataBaseService, IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             _settings = new Settings();
 
             _tableService = tableService;
@@ -186,7 +190,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonConditions_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, false);
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, false, _serviceProvider);
             form.ShowDialog();
 
             if (form.IsSet)
@@ -208,7 +212,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void ButtonDelete_Click(object sender, EventArgs e)
         {
-            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, true);
+            var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, true, _serviceProvider);
             form.ShowDialog();
 
             if (form.IsSet)
@@ -237,7 +241,7 @@ namespace DBMS.Clients.WinForm.Controls
 
         private void EditTableShema()
         {
-            new TableSchemaForm(_tableService).ShowDialog();
+            new TableSchemaForm(_tableService, _serviceProvider).ShowDialog();
 
             _tableService.UpdateSchema();
         }

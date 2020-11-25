@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DBMS.GrpcServer.Helpers;
 using DBMS.GrpcServer.Services;
+using DBMS.SharedModels.Extentions;
 using DBMS.SharedModels.Infrastructure.Helpers;
 using DBMS.SharedModels.Infrastructure.Interfaces;
 using DBMS.SharedModels.Infrastructure.Services;
@@ -54,11 +55,9 @@ namespace DBMS.GrpcServer
         private void ConfigureIoC(IServiceCollection services)
         {
             services.AddSingleton(x => Settings);
-            services.AddScoped<IDbDal, DbDal>();
-            services.AddScoped<IDbMapper, DbMapper>();
-            services.AddScoped<IFileHelper, FileHelper>();
-            services.AddScoped<ITableDal, TableDal>();
             services.AddScoped<IGrpcModelMapper, GrpcModelMapper>();
+
+            services.AddSharedFunctionality();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

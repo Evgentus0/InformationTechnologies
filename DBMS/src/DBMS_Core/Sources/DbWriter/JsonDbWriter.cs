@@ -1,4 +1,5 @@
-﻿using DBMS_Core.Interfaces;
+﻿using DBMS.SqlServerSource.Interfaces;
+using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using System;
 using System.Collections.Generic;
@@ -6,11 +7,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace DBMS_Core.Sources.DbWriter
 {
-    class JsonDbWriter : IDbWriter
+    public class JsonDbWriter : IDbWriter
     {
+        private IDbClientFactory _dbClientFactory;
+
+        public JsonDbWriter(IDbClientFactory dbClientFactory)
+        {
+            _dbClientFactory = dbClientFactory;
+        }
+
         public void DeleteDb(DataBase dataBase)
         {
             File.Delete($"{dataBase.Settings.RootPath}\\{dataBase.Name}{Constants.DataBaseFileExtention}");

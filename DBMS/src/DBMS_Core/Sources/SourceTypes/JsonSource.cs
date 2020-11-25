@@ -11,13 +11,19 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    class JsonSource : BaseSource
+    public class JsonSource : BaseSource
     {
         public override string Type => typeof(JsonSource).AssemblyQualifiedName;
 
         public override long SizeInBytes => new FileInfo(Url).Length;
 
         public override bool AllowMultipleSource => true;
+
+        public JsonSource(IDbClientFactory dbClientFactory):base(dbClientFactory)
+        { }
+
+        public JsonSource()
+        { }
 
         protected override IDbClient DbClient 
         {

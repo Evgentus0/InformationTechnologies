@@ -7,13 +7,19 @@ using System.Text;
 
 namespace DBMS_Core.Sources
 {
-    class MongoDbSource : BaseSource
+    public class MongoDbSource : BaseSource
     {
         public override string Type => typeof(MongoDbSource).AssemblyQualifiedName;
 
         public override long SizeInBytes => default;
 
         public override bool AllowMultipleSource => false;
+
+        public MongoDbSource(IDbClientFactory dbClientFactory) : base(dbClientFactory)
+        { }
+
+        public MongoDbSource()
+        { }
 
         protected override IDbClient DbClient
         {

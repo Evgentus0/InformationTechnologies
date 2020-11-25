@@ -1,15 +1,16 @@
 ﻿using DBMS_Core.Extentions;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models.Types;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DBMS_Core.Infrastructure.Factories
+namespace DBMS_Core.Infrastructure.Factories.Implementations
 {
-    public class ValidatorsFactory
+    class ValidatorsFactory : IValidatorsFactory
     {
-        public static IValidator GetValidator(SupportedTypes valueType, int operation, object value)
+        public IValidator GetValidator(SupportedTypes valueType, int operation, object value)
         {
             if (valueType.IsValidatorAvailable())
             {
@@ -24,7 +25,7 @@ namespace DBMS_Core.Infrastructure.Factories
                     var operationType = Type.GetType(validator.OperationType);
                     enumOperation = (int)Enum.ToObject(operationType, operation);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new Exception("Invalid operation type!", ex);
                 }
@@ -42,4 +43,5 @@ namespace DBMS_Core.Infrastructure.Factories
             }
         }
     }
+    
 }

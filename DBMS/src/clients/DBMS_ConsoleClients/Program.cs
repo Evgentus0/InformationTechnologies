@@ -12,6 +12,7 @@ using DBMS_Core.Infrastructure.Factories;
 using DBMS.SqlServerSource.Interfaces;
 using DBMS.SqlServerSource.Clients;
 using DBMS.SqlServerSource;
+using DBSM.Manager.Interfaces;
 
 namespace DBMS_ConsoleClients
 {
@@ -19,9 +20,7 @@ namespace DBMS_ConsoleClients
     {
         private static void Main(string[] args)
         {
-            string server = @"DESKTOP-2UQRN34\SQLEXPRESS";
-
-            var dbs = DbWriterFactory.GetDbWriter(SupportedSources.SqlServer).GetDbsNames(server);
+            
         }
 
 
@@ -34,7 +33,7 @@ namespace DBMS_ConsoleClients
             long fileSize = 1000000;
 
             //var manager = DbManagerFactory.GetDbManagerRest(name, fileSize, source);
-            var manager = DbManagerFactory.GetDbManagerRest(name);
+            IDbManager manager = null;// DbManagerFactory.GetDbManagerRest(name);
             //manager.AddTable("Table1");
             //manager.AddTable("Table2");
             var table = manager["Table1"];
@@ -83,7 +82,7 @@ namespace DBMS_ConsoleClients
             string path = @"mongodb://localhost:27017";
             long fileSize = 1000000;
             //IDataBaseService dataBaseService = DataBaseServiceFactory.GetDataBaseService(name, path, fileSize, SupportedSources.MongoDb);
-            IDataBaseService dataBaseService = DataBaseServiceFactory.GetDataBaseService($"{path}|{name}");
+            IDataBaseService dataBaseService = null ;// = DataBaseServiceFactory.GetDataBaseService($"{path}|{name}");
             //dataBaseService.AddTable("SecondTable");
             //dataBaseService.AddTable("FirstTable");
             var table = dataBaseService["FirstTable"];

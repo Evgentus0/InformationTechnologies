@@ -1,3 +1,5 @@
+using DBMS.Manager.Exntentions;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +19,17 @@ namespace DBMS.Clients.WinForm
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main());
+
+            var serviceProvider = SetupServices();
+            Application.Run(new Main(serviceProvider));
+        }
+
+        private static IServiceProvider SetupServices()
+        {
+            var serviceProvider = new ServiceCollection();
+            serviceProvider.AddManagers();
+
+            return serviceProvider.BuildServiceProvider();
         }
     }
 }

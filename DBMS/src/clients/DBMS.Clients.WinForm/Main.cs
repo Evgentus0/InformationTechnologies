@@ -1,6 +1,8 @@
 ﻿using DBMS.Clients.WinForm.Controls;
 using DBMS.Clients.WinForm.Forms;
 using DBMS.Clients.WinForm.Managers;
+using DBMS.Manager.Factories;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,16 +17,20 @@ namespace DBMS.Clients.WinForm
     public partial class Main : Form
     {
         private IDbFormManager _formManager;
+        private IServiceProvider _serviceProvider;
 
-        public Main()
+        public Main(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
+
             InitializeComponent();
             InitMenu();
             SharedControls.FlowLayoutPanelLeftMenu = flowLayoutPanelMenu;
             SharedControls.GroupBoxData = groupBoxGrid;
             SharedControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
+            
 
-            _formManager = new DbFormManagerLocal();
+            _formManager = new DbFormManagerRemote(_serviceProvider);
         }
 
         private void InitMenu()

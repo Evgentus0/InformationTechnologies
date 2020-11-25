@@ -12,13 +12,19 @@ using System.Threading.Tasks;
 
 namespace DBMS_Core.Sources
 {
-    class SqlServerSource : BaseSource
+    public class SqlServerSource : BaseSource
     {
         public override string Type => typeof(SqlServerSource).AssemblyQualifiedName;
 
         public override long SizeInBytes => default;
 
         public override bool AllowMultipleSource => false;
+
+        public SqlServerSource(IDbClientFactory dbClientFactory) : base(dbClientFactory)
+        { }
+
+        public SqlServerSource()
+        { }
 
         protected override IDbClient DbClient
         {
@@ -27,7 +33,7 @@ namespace DBMS_Core.Sources
                 if (_dbClient == null)
                 {
                     var data = Url.Split(Constants.Separator);
-                    _dbClient = DbClientFactory.GetClient(data[0], data[1], data[2]);
+                    _dbClient = DbClientFactory.GetSqlClient(data[0], data[1], data[2]);
                 }
 
                 return _dbClient;

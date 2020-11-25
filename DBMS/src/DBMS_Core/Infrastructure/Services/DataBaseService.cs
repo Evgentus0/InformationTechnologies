@@ -1,4 +1,5 @@
 ﻿using DBMS_Core.Infrastructure.Factories;
+using DBMS_Core.Infrastructure.Factories.Interfaces;
 using DBMS_Core.Interfaces;
 using DBMS_Core.Models;
 using DBMS_Core.Sources;
@@ -17,6 +18,10 @@ namespace DBMS_Core.Infrastructure.Services
     internal class DataBaseService: IDataBaseService
     {
         private IFileWorker _fileWorker;
+
+        private ITableServiceFactory _tableServiceFactory;
+        private IDbWriterFactory _dbWriterFactory;
+
         private DataBase DataBase {  get;  set; }
 
         public string Name => DataBase.Name;
@@ -24,14 +29,20 @@ namespace DBMS_Core.Infrastructure.Services
         {
             get
             {
-                return TableServiceFactory.GetTableService(DataBase.Tables.Find(x => x.Name == tableName), _fileWorker);
+                return _tableServiceFactory.GetTableService(DataBase.Tables.Find(x => x.Name == tableName), _fileWorker);
             }
         }
 
         private string _dataBaseFile => $"{DataBase.Name}{DataBaseFileExtention}";
 
-        public DataBaseService(string name, string rootPath, long fileSize, SupportedSources source)
+        public DataBaseService(string name, string rootPath, long fileSize, SupportedSources source, 
+            IFileWorkerFactory fileWorkerFactory,
+            ITableServiceFactory tableServiceFactory,
+            IDbWriterFactory dbWriterFactory)
         {
+            _tableServiceFactory = tableServiceFactory;
+            _dbWriterFactory = dbWriterFactory;
+
             var regex = new Regex(".*"); //valid 
 
             if (regex.IsMatch(rootPath))
@@ -41,7 +52,7 @@ namespace DBMS_Core.Infrastructure.Services
                     Name = name, 
                     Settings = new Settings { RootPath = rootPath, FileSize = fileSize, DefaultSource = source } 
                 };
-                _fileWorker = FileWorkerFactory.GetFileWorker(DataBase);
+                _fileWorker = fileWorkerFactory.GetFileWorker(DataBase);
 
                 _fileWorker.UpdateDataBaseFile();
             }
@@ -51,11 +62,17 @@ namespace DBMS_Core.Infrastructure.Services
             }
         }
 
-        public DataBaseService(string path)
+        public DataBaseService(string path, 
+            IFileWorkerFactory fileWorkerFactory,
+            ITableServiceFactory tableServiceFactory,
+            IDbWriterFactory dbWriterFactory)
         {
+            _tableServiceFactory = tableServiceFactory;
+            _dbWriterFactory = dbWriterFactory;
+
             SupportedSources source = ResolvePath(path);
 
-            _fileWorker = FileWorkerFactory.GetFileWorker(new DataBase { Settings = new Settings { DefaultSource = source} });
+            _fileWorker = fileWorkerFactory.GetFileWorker(new DataBase { Settings = new Settings { DefaultSource = source} });
             DataBase = _fileWorker.GetDataBaseFromFile(path);
 
             _fileWorker.DataBase = DataBase;
@@ -103,7 +120,7 @@ namespace DBMS_Core.Infrastructure.Services
         {
             foreach(var table in DataBase.Tables)
             {
-                yield return TableServiceFactory.GetTableService(table, _fileWorker);
+                yield return _tableServiceFactory.GetTableService(table, _fileWorker);
             }
         }
 
@@ -116,7 +133,7 @@ namespace DBMS_Core.Infrastructure.Services
                 DeleteTable(table.Name);
             }
 
-            DbWriterFactory.GetDbWriter(DataBase.Settings.DefaultSource).DeleteDb(DataBase);
+            _dbWriterFactory.GetDbWriter(DataBase.Settings.DefaultSource).DeleteDb(DataBase);
 
             this.DataBase = null;
         }

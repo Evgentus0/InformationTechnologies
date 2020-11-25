@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Text.Json.Serialization;
 using DBMS_Core.Converters;
 using DBMS_Core.Models;
+using DBMS.SqlServerSource.Interfaces;
 
 namespace DBMS_Core.Interfaces
 {
@@ -17,6 +18,8 @@ namespace DBMS_Core.Interfaces
         [JsonIgnore]
         long SizeInBytes { get; }
         bool AllowMultipleSource { get; }
+        [JsonIgnore]
+        IDbClientFactory DbClientFactory { get; set; }
 
         void SetUrl(DataBase db, Table table);
         void Delete();

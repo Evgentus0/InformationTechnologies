@@ -12,5 +12,18 @@ namespace DBMS_Core.Models.Types
         public string Path { get; set; }
         [JsonIgnore]
         public long Size => new FileInfo(Path).Length;
+
+        public override bool Equals(object obj)
+        {
+            var anotherPic = (Picture)obj;
+
+            return Description == anotherPic.Description
+                && Path == anotherPic.Path;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }
