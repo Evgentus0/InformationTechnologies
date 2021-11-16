@@ -13,11 +13,16 @@ realInvl(interval);
 <b>Already done:</b>
 <ul>
   <li>2-3) Local DBMS</li>
-  <li>9) Server Client</li>
+  <li>4) Remote version, gRPC</li>
+  <li>9) Server Client with different technologies (.NET, Angular)</li>
   <li>10) Rest API</li>
   <li>13-14) Web Project(ASP.NET Core WebApi)</li>
+  <li>15) Web project with AJAX. Angular</li>
+  <li>17) Cloud technologies, Azure, MongoDB Atlas</li>
+  <li>19) Integration testing with Mock for remote version</li>
   <li>20) Sql Server Support</li>
   <li>21) MongoDB Support</li>
+  <li>22) Integration testing with Mock for DataBase providers</li>
 </ul>
 <h2>What do we have here?</h2>
 <h4>It is a Database managament system application, which allow you to manipulate with supported data types. There are all CRUD operations plus advanced select (with conditions), advanced delete (with conditions) and Union operation for tables. Also have a WinForm UI client for use it. There is REST API (AspNet WebApi) which allow you do all supported operations remote, and it also work with WinForm client. And one more remote protocol called gRPC (based on Protobuf) + Angular client which used this gRPC server.<br>Application use three way to store data such as json format files, Sql Server and MongoDB server.<h4>
